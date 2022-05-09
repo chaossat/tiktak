@@ -5,6 +5,6 @@ import (
 )
 
 //TODO:设置路由规则
-func Router(r *gin.Engine) {
+func Init(r *gin.Engine) {
 	//A:=r.Group("/A")
 }

@@ -13,7 +13,7 @@ import (
 func main() {
 	r := gin.Default()
 	InitConfig()
-	router.Router(r)
+	router.Init(r)
 	// port := viper.GetString("server.port")
 	// panic(r.Run())
 }
