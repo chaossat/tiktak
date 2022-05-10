@@ -6,7 +6,10 @@ import (
 )
 
 //TODO：更新其他需要储存在mysql的结构体
+
+//SetAutoMigrate: 根据结构体自动建表
 func SetAutoMigrate(db *gorm.DB) {
 	db.Set("gorm:table_options", "ENGINE=InnoDB").AutoMigrate(&model.User_info{})
+	db.Set("gorm:table_options", "ENGINE=InnoDB").AutoMigrate(&model.Video{})
 	//.........
 }

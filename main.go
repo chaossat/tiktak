@@ -3,6 +3,7 @@ package main
 import (
 	"os"
 
+	"github.com/chaossat/tiktak/common"
 	"github.com/chaossat/tiktak/router"
 	"github.com/gin-gonic/gin"
 	"github.com/spf13/viper"
@@ -14,8 +15,9 @@ func main() {
 	r := gin.Default()
 	InitConfig()
 	router.Init(r)
-	// port := viper.GetString("server.port")
-	// panic(r.Run())
+	common.InitDB()
+	port := viper.GetString("server.port")
+	panic(r.Run(port))
 }
 
 func InitConfig() {

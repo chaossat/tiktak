@@ -9,7 +9,7 @@ import (
 	"github.com/spf13/viper"
 )
 
-var DB *gorm.DB
+var db *gorm.DB
 
 //TODO:支持redis
 func InitDB() *gorm.DB {
@@ -22,14 +22,16 @@ func InitDB() *gorm.DB {
 	charset := viper.GetString("datasource.mysql.charset")
 	args := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=%s&parseTime=true",
 		username, password, host, port, database, charset)
-	db, err := gorm.Open(driverName, args)
+	tpdb, err := gorm.Open(driverName, args)
 	if err != nil {
 		panic(err)
 	}
-	migration.SetAutoMigrate(db)
-	DB = db
-	return DB
+	migration.SetAutoMigrate(tpdb)
+	db = tpdb
+	return db
 }
+
+//GetDB:返回db
 func GetDB() *gorm.DB {
-	return DB
+	return db
 }
