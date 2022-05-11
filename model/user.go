@@ -9,4 +9,5 @@ type User_info struct {
 	Favorates        string //点赞的视频
 	Videos_published string //发布的视频
 	Comments         string //发布的评论
+	Password_Hash 	 string // 加密后的密码
 }
