@@ -18,13 +18,27 @@ import (
 //UploadHandler:处理视频上传请求
 func UploadHandler(ctx *gin.Context) {
 	//TODO:根据token鉴权，并获取userID
-	userID := 1
+	token := ctx.PostForm("token")
+	userVerifyInfo := &model.User_verify_Info{
+		Token: token,
+	}
+	err := db.GetUserVerifyInfoWithToken(userVerifyInfo)
+	if err != nil {
+		fmt.Printf("Failed to get verify info, err:%s\n", err.Error())
+		UploadResponse(ctx, -1, "Error Occoured!")
+		return
+	}
+	userID := userVerifyInfo.ID
+	if userID < 1 || userVerifyInfo.ExpirationTime < int(time.Now().Unix()) {
+		UploadResponse(ctx, -2, "Invalid Token,Please Relogin!")
+		return
+	}
 
 	//获取文件
 	file, header, err := ctx.Request.FormFile("data")
 	if err != nil {
 		fmt.Println(err.Error())
-		UploadResponse(ctx, -1, "Error Occoured!")
+		UploadResponse(ctx, -3, "Error Occoured!")
 		return
 	}
 	defer file.Close()
@@ -32,7 +46,7 @@ func UploadHandler(ctx *gin.Context) {
 	//判断文件的后缀名，目前仅放行mp4文件
 	ext := path.Ext(header.Filename)
 	if ext != ".mp4" {
-		UploadResponse(ctx, -2, "Only MP4 File Is Allowed!")
+		UploadResponse(ctx, -4, "Only MP4 File Is Allowed!")
 		return
 	}
 
@@ -40,7 +54,7 @@ func UploadHandler(ctx *gin.Context) {
 	buf := bytes.NewBuffer(nil)
 	if _, err := io.Copy(buf, file); err != nil {
 		fmt.Printf("Failed to get file data, err:%s\n", err.Error())
-		UploadResponse(ctx, -3, "Error Occoured!")
+		UploadResponse(ctx, -5, "Error Occoured!")
 		return
 	}
 	sha1 := util.Sha1(buf.Bytes())
@@ -50,14 +64,14 @@ func UploadHandler(ctx *gin.Context) {
 	newFile, err := os.Create(tempLocation)
 	if err != nil {
 		fmt.Printf("Failed to create file, err:%s\n", err.Error())
-		UploadResponse(ctx, -4, "Error Occoured!")
+		UploadResponse(ctx, -6, "Error Occoured!")
 		return
 	}
-	defer newFile.Close()
+	// defer newFile.Close()
 	_, err = newFile.Write(buf.Bytes())
 	if err != nil {
 		fmt.Printf("Failed to copy file, err:%s\n", err.Error())
-		UploadResponse(ctx, -5, "Error Occoured!")
+		UploadResponse(ctx, -7, "Error Occoured!")
 		return
 	}
 	videoMeta := model.Video{
@@ -71,33 +85,23 @@ func UploadHandler(ctx *gin.Context) {
 	err = db.VideoUpload(&videoMeta)
 	if err != nil {
 		fmt.Printf("Failed to update mysql, err:%s\n", err.Error())
-		UploadResponse(ctx, -6, "Error Occoured!")
+		UploadResponse(ctx, -8, "Error Occoured!")
 		return
 	}
 
-	//告诉客户端已经上传完成，并继续进行上传oss的操作
+	//告诉客户端已经上传完成，并异步进行本地转存oss的操作
 	UploadResponse(ctx, 0, "Upload Succeed!")
 
-	//继续上传oss,并更新文件Location
-	//TODO：做成异步处理,然后在更新完成视频地址后，删除本地文件
+	//向通道压入转存请求
 	ossPath := "videos/" + sha1
-	newFile.Seek(0, 0) // 游标重新回到newFile文件头部，否则读不出任何数据
-	err = oss.Bucket().PutObject(ossPath, newFile)
-	if err != nil {
-		fmt.Println(newFile)
-		fmt.Printf("Failed while pushing to oss, err:%s\n", err.Error())
-		return
-	}
 	videoMeta.Location = "oss:" + ossPath
-	err = db.VideoLocationUpdate(&videoMeta)
-	if err != nil {
-		fmt.Printf("Failed to update mysql, err:%s\n", err.Error())
+	videoOBJ := &oss.VideoOBJ{
+		OssPath:   ossPath,
+		File:      newFile,
+		VideoMeta: videoMeta,
 	}
+	oss.MQ_channel <- videoOBJ
 }
-
-// func Upload_Oss(){
-//
-// }
 
 //UploadResponse:返回上传处理信息
 func UploadResponse(ctx *gin.Context, code int, message string) {

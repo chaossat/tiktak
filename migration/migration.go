@@ -10,6 +10,9 @@ import (
 //SetAutoMigrate: 根据结构体自动建表
 func SetAutoMigrate(db *gorm.DB) {
 	db.Set("gorm:table_options", "ENGINE=InnoDB").AutoMigrate(&model.User_info{})
+	db.Set("gorm:table_options", "ENGINE=InnoDB").AutoMigrate(&model.User_verify_Info{})
 	db.Set("gorm:table_options", "ENGINE=InnoDB").AutoMigrate(&model.Video{})
+	db.Set("gorm:table_options", "ENGINE=InnoDB").AutoMigrate(&model.Favorate{})
+	db.Set("gorm:table_options", "ENGINE=InnoDB").AutoMigrate(&model.Comment{})
 	//.........
 }
