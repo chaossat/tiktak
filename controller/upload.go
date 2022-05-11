@@ -19,7 +19,7 @@ import (
 
 //UploadHandler:处理视频上传请求
 func UploadHandler(ctx *gin.Context) {
-	//TODO:根据token鉴权，并获取userID
+	//根据token鉴权，并获取userID
 	token := ctx.PostForm("token")
 	info := common.GetRDB().Get(token).Val()
 	userinfo := &model.User_info{}
