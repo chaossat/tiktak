@@ -24,9 +24,11 @@ func main() {
 
 func InitConfig() {
 	workDir, _ := os.Getwd()
-	viper.SetConfigName("config")
+	viper.SetConfigName("config.yml")
 	viper.SetConfigType("yml")
-	viper.AddConfigPath(workDir + "/config")
+	// 这里不需要加文件名
+	//viper.AddConfigPath(workDir + "/config.yml")
+	viper.AddConfigPath(workDir+"/config")
 	err := viper.ReadInConfig()
 	if err != nil {
 		panic(err)

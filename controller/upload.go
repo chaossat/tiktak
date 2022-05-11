@@ -2,12 +2,14 @@ package controller
 
 import (
 	"bytes"
+	"encoding/json"
 	"fmt"
 	"io"
 	"os"
 	"path"
 	"time"
 
+	"github.com/chaossat/tiktak/common"
 	"github.com/chaossat/tiktak/db"
 	"github.com/chaossat/tiktak/model"
 	"github.com/chaossat/tiktak/oss"
@@ -19,17 +21,15 @@ import (
 func UploadHandler(ctx *gin.Context) {
 	//TODO:根据token鉴权，并获取userID
 	token := ctx.PostForm("token")
-	userVerifyInfo := &model.User_verify_Info{
-		Token: token,
-	}
-	err := db.GetUserVerifyInfoWithToken(userVerifyInfo)
+	info := common.GetRDB().Get(token).Val()
+	userinfo := &model.User_info{}
+	err := json.Unmarshal([]byte(info), userinfo)
 	if err != nil {
 		fmt.Printf("Failed to get verify info, err:%s\n", err.Error())
 		UploadResponse(ctx, -1, "Error Occoured!")
 		return
 	}
-	userID := userVerifyInfo.ID
-	if userID < 1 || userVerifyInfo.ExpirationTime < int(time.Now().Unix()) {
+	if userinfo.ID == 0 {
 		UploadResponse(ctx, -2, "Invalid Token,Please Relogin!")
 		return
 	}
@@ -75,12 +75,10 @@ func UploadHandler(ctx *gin.Context) {
 		return
 	}
 	videoMeta := model.Video{
-		Title:          header.Filename[:len(header.Filename)-4],
-		AuthorID:       userID,
-		FavorateCounts: 0,
-		CommentCounts:  0,
-		UpdateTime:     int(time.Now().Unix()),
-		Location:       tempLocation[2:],
+		Title:      header.Filename[:len(header.Filename)-4],
+		AuthorID:   userinfo.ID,
+		UpdateTime: int(time.Now().Unix()),
+		Location:   tempLocation[2:],
 	}
 	err = db.VideoUpload(&videoMeta)
 	if err != nil {

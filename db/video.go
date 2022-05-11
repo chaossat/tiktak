@@ -10,7 +10,7 @@ func VideoUpload(video *model.Video) error {
 	return common.GetDB().Create(video).Error
 }
 
-//VideoUpdate: 更新视频的地址信息
+//VideoLocationUpdate: 更新视频的地址信息
 func VideoLocationUpdate(video *model.Video) error {
 	return common.GetDB().Model(video).Where("id = ?", video.ID).Update("Location", video.Location).Error
 }
