@@ -9,6 +9,5 @@ type Video struct {
 	Location      string //储存位置
 	CommentCount  int64  //评论数
 	FavoriteCount int64  //点赞数
-	Play_url      string //播放地址
-	Cover_url	  string //封面地址
+	Cover_location	  string //封面储存位置
 }
