@@ -66,7 +66,13 @@ func TestUserInfoById(t *testing.T) {
 		log.Println(inf)
 	}
 }
-
+//func TestName(t *testing.T) {
+//	// 加载配置
+//	InitConfig()
+//	// 加载数据库
+//	common.InitDB()
+//	migration.SetAutoMigrate(common.GetDB())
+//}
 
 
 func InitConfig() {
