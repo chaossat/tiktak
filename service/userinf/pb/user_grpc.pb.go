@@ -4,7 +4,7 @@
 // - protoc             v3.20.1
 // source: proto/user.proto
 
-package api
+package pb
 
 import (
 	context "context"
@@ -22,7 +22,7 @@ const _ = grpc.SupportPackageIsVersion7
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type UserInfClient interface {
-	SayHello(ctx context.Context, in *DouyinUserRequest, opts ...grpc.CallOption) (*DouyinUserResponse, error)
+	DouyinUserRequest(ctx context.Context, in *User, opts ...grpc.CallOption) (*DouyinUserResponse, error)
 }
 
 type userInfClient struct {
@@ -33,9 +33,9 @@ func NewUserInfClient(cc grpc.ClientConnInterface) UserInfClient {
 	return &userInfClient{cc}
 }
 
-func (c *userInfClient) SayHello(ctx context.Context, in *DouyinUserRequest, opts ...grpc.CallOption) (*DouyinUserResponse, error) {
+func (c *userInfClient) DouyinUserRequest(ctx context.Context, in *User, opts ...grpc.CallOption) (*DouyinUserResponse, error) {
 	out := new(DouyinUserResponse)
-	err := c.cc.Invoke(ctx, "/douyin.core.UserInf/sayHello", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/douyin.core.UserInf/douyin_user_request", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -46,7 +46,7 @@ func (c *userInfClient) SayHello(ctx context.Context, in *DouyinUserRequest, opt
 // All implementations must embed UnimplementedUserInfServer
 // for forward compatibility
 type UserInfServer interface {
-	SayHello(context.Context, *DouyinUserRequest) (*DouyinUserResponse, error)
+	DouyinUserRequest(context.Context, *User) (*DouyinUserResponse, error)
 	mustEmbedUnimplementedUserInfServer()
 }
 
@@ -54,8 +54,8 @@ type UserInfServer interface {
 type UnimplementedUserInfServer struct {
 }
 
-func (UnimplementedUserInfServer) SayHello(context.Context, *DouyinUserRequest) (*DouyinUserResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method SayHello not implemented")
+func (UnimplementedUserInfServer) DouyinUserRequest(context.Context, *User) (*DouyinUserResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DouyinUserRequest not implemented")
 }
 func (UnimplementedUserInfServer) mustEmbedUnimplementedUserInfServer() {}
 
@@ -70,20 +70,20 @@ func RegisterUserInfServer(s grpc.ServiceRegistrar, srv UserInfServer) {
 	s.RegisterService(&UserInf_ServiceDesc, srv)
 }
 
-func _UserInf_SayHello_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(DouyinUserRequest)
+func _UserInf_DouyinUserRequest_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(User)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(UserInfServer).SayHello(ctx, in)
+		return srv.(UserInfServer).DouyinUserRequest(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/douyin.core.UserInf/sayHello",
+		FullMethod: "/douyin.core.UserInf/douyin_user_request",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(UserInfServer).SayHello(ctx, req.(*DouyinUserRequest))
+		return srv.(UserInfServer).DouyinUserRequest(ctx, req.(*User))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -96,8 +96,8 @@ var UserInf_ServiceDesc = grpc.ServiceDesc{
 	HandlerType: (*UserInfServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
-			MethodName: "sayHello",
-			Handler:    _UserInf_SayHello_Handler,
+			MethodName: "douyin_user_request",
+			Handler:    _UserInf_DouyinUserRequest_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
