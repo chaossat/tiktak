@@ -2,15 +2,15 @@ package controller
 
 import (
 	"bytes"
-	"encoding/json"
 	"fmt"
 	"io"
 	"os"
 	"path"
+	"strconv"
 	"time"
 
-	"github.com/chaossat/tiktak/common"
 	"github.com/chaossat/tiktak/db"
+	"github.com/chaossat/tiktak/middleware"
 	"github.com/chaossat/tiktak/model"
 	"github.com/chaossat/tiktak/oss"
 	"github.com/chaossat/tiktak/util"
@@ -21,23 +21,35 @@ import (
 func UploadHandler(ctx *gin.Context) {
 	//根据token鉴权，并获取userID
 	token := ctx.PostForm("token")
-	info, err := common.GetRDB().Get(token).Result()
+	user, err := middleware.CheckToken(token)
 	if err != nil {
-		fmt.Printf("Failed to get verify info, err:%s\n", err.Error())
-		UploadResponse(ctx, 1, "Error Occoured!")
+		fmt.Printf("Failed To Verify Token, err:%s\n", err.Error())
+		UploadResponse(ctx, -1, "Invalid Token!")
 		return
 	}
-	userinfo := &model.User_info{}
-	err = json.Unmarshal([]byte(info), userinfo)
+	userID, err := strconv.Atoi(user.UserID)
 	if err != nil {
-		fmt.Printf("Failed to get verify info, err:%s\n", err.Error())
-		UploadResponse(ctx, -1, "Error Occoured!")
+		fmt.Printf("Failed To Trans UserID, err:%s\n", err.Error())
+		UploadResponse(ctx, -2, "Error Occoured!")
 		return
 	}
-	if userinfo.ID == 0 {
-		UploadResponse(ctx, -2, "Invalid Token,Please Relogin!")
-		return
-	}
+	// info, err := common.GetRDB().Get(token).Result()
+	// if err != nil {
+	// 	fmt.Printf("Failed to get verify info, err:%s\n", err.Error())
+	// 	UploadResponse(ctx, 1, "Error Occoured!")
+	// 	return
+	// }
+	// userinfo := &model.User_info{}
+	// err = json.Unmarshal([]byte(info), userinfo)
+	// if err != nil {
+	// 	fmt.Printf("Failed to get verify info, err:%s\n", err.Error())
+	// 	UploadResponse(ctx, -1, "Error Occoured!")
+	// 	return
+	// }
+	// if userinfo.ID == 0 {
+	// 	UploadResponse(ctx, -2, "Invalid Token,Please Relogin!")
+	// 	return
+	// }
 
 	//获取文件
 	file, header, err := ctx.Request.FormFile("data")
@@ -81,7 +93,7 @@ func UploadHandler(ctx *gin.Context) {
 	}
 	videoMeta := model.Video{
 		Title:      header.Filename[:len(header.Filename)-4],
-		AuthorID:   userinfo.ID,
+		AuthorID:   userID,
 		UpdateTime: int(time.Now().Unix()),
 		Location:   tempLocation[2:],
 	}

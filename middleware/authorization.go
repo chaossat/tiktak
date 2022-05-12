@@ -2,17 +2,18 @@ package middleware
 
 import (
 	"errors"
-	"github.com/dgrijalva/jwt-go"
-	"github.com/spf13/viper"
 	"log"
 	"time"
+
+	"github.com/dgrijalva/jwt-go"
+	"github.com/spf13/viper"
 )
 
 //token验证
 
 //载荷
 type MyClaims struct {
-	Username string `json:"username"`
+	UserID string `json:"userID"`
 	jwt.StandardClaims
 }
 
@@ -24,11 +25,11 @@ func getkey() string {
 }
 
 //生成一个token
-func CreateToken(username string) (string, error) {
+func CreateToken(userID string) (string, error) {
 	//到期时间
 	expireTime := time.Now().Add(24 * 30 * time.Hour)
 	SetClaims := MyClaims{
-		Username: username,
+		UserID: userID,
 		StandardClaims: jwt.StandardClaims{
 			ExpiresAt: expireTime.Unix(),
 			Issuer:    "douyin",
@@ -43,7 +44,7 @@ func CreateToken(username string) (string, error) {
 	return token, nil
 }
 
-//验证token
+//验证token,并返回解码信息
 func CheckToken(token string) (*MyClaims, error) {
 	setToken, err := jwt.ParseWithClaims(token, &MyClaims{}, func(token *jwt.Token) (interface{}, error) {
 		return getkey(), nil

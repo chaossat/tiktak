@@ -3,10 +3,12 @@ package oss
 import (
 	"fmt"
 	"os"
+	"time"
 
 	"github.com/aliyun/aliyun-oss-go-sdk/oss"
 	"github.com/chaossat/tiktak/db"
 	"github.com/chaossat/tiktak/model"
+	"github.com/chaossat/tiktak/util"
 	"github.com/spf13/viper"
 )
 
@@ -57,6 +59,10 @@ func Bucket() *oss.Bucket {
 
 //GetURL:根据视频地址返回可播放的URL
 func GetURL(filePath string) string {
+	//如果当前视频还未转存成功，返回临时视频地址
+	if filePath[0] == 't' {
+		return util.GetIP() + viper.GetString("server.port") + "/" + filePath
+	}
 	URL, err := Bucket().SignURL(filePath, oss.HTTPGet, 3600)
 	if err != nil {
 		fmt.Println("Error Occoured While Getting Video URL!", err.Error())
@@ -69,21 +75,32 @@ func GetURL(filePath string) string {
 func Init() {
 	for {
 		video := <-MQ_channel
-		video.File.Seek(0, 0) // 游标重新回到File文件头部，否则oss读不出任何数据
-		err := Bucket().PutObject(video.OssPath, video.File)
-		video.File.Close()
-		if err != nil {
-			fmt.Printf("Failed while pushing to oss, err:%s\n", err.Error())
-			continue
-		}
-		err = db.VideoLocationUpdate(&(video.VideoMeta))
-		if err != nil {
-			fmt.Printf("Failed to update mysql, err:%s\n", err.Error())
-			continue
-		}
-		err = os.Remove("./tempfile/" + video.OssPath[7:])
-		if err != nil {
-			fmt.Printf("Failed to delete local file, err:%s\n", err.Error())
-		}
+		go Redeposit(video)
+	}
+}
+
+//Redeposit:转存文件
+func Redeposit(video *VideoOBJ) {
+	video.File.Seek(0, 0) // 游标重新回到File文件头部，否则oss读不出任何数据
+	err := Bucket().PutObject(video.OssPath, video.File)
+	video.File.Close()
+	if err != nil {
+		fmt.Printf("Failed while pushing to oss, err:%s\n", err.Error())
+		return
+	}
+	err = db.VideoLocationUpdate(&(video.VideoMeta))
+	if err != nil {
+		fmt.Printf("Failed to update mysql, err:%s\n", err.Error())
+		return
+	}
+	delete("./tempfile/" + video.OssPath[7:])
+}
+
+//delete:转存成功后，文件仍将在本地暂存1小时后删除
+func delete(filePath string) {
+	time.Sleep(time.Hour)
+	err := os.Remove(filePath)
+	if err != nil {
+		fmt.Printf("Failed to delete local file, err:%s\n", err.Error())
 	}
 }

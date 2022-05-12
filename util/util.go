@@ -5,6 +5,8 @@ import (
 	"crypto/sha1"
 	"encoding/hex"
 	"fmt"
+	"net"
+	"strings"
 )
 
 var salt = "6824Nil"
@@ -34,4 +36,16 @@ func Encodeing(s string) string {
 // MD5:对密码加盐后进行md5加密
 func MD5V(pwd string) string {
 	return MD5(pwd + salt)
+}
+
+//GetIP:获取本机ip地址
+func GetIP() (ip string) {
+	conn, err := net.Dial("udp", "8.8.8.8:53")
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	localAddr := conn.LocalAddr().(*net.UDPAddr)
+	ip = strings.Split(localAddr.String(), ":")[0]
+	return
 }

@@ -13,5 +13,3 @@ datasource:
     port: 6379
     password:
     DB: 0
-server:
-  port: 80
