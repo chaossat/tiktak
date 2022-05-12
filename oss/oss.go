@@ -14,7 +14,6 @@ import (
 
 //通信结构体
 type VideoOBJ struct {
-	OssPath   string
 	File      *os.File
 	VideoMeta model.Video
 }
@@ -82,7 +81,7 @@ func Init() {
 //Redeposit:转存文件
 func Redeposit(video *VideoOBJ) {
 	video.File.Seek(0, 0) // 游标重新回到File文件头部，否则oss读不出任何数据
-	err := Bucket().PutObject(video.OssPath, video.File)
+	err := Bucket().PutObject(video.VideoMeta.Location, video.File)
 	video.File.Close()
 	if err != nil {
 		fmt.Printf("Failed while pushing to oss, err:%s\n", err.Error())
@@ -93,7 +92,7 @@ func Redeposit(video *VideoOBJ) {
 		fmt.Printf("Failed to update mysql, err:%s\n", err.Error())
 		return
 	}
-	delete("./tempfile/" + video.OssPath[7:])
+	delete("./tempfile/" + video.VideoMeta.Location[7:])
 }
 
 //delete:转存成功后，文件仍将在本地暂存1小时后删除

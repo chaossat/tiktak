@@ -111,7 +111,6 @@ func UploadHandler(ctx *gin.Context) {
 	ossPath := "videos/" + sha1 + ".mp4"
 	videoMeta.Location = ossPath
 	videoOBJ := &oss.VideoOBJ{
-		OssPath:   ossPath,
 		File:      newFile,
 		VideoMeta: videoMeta,
 	}
