@@ -1,5 +1,3 @@
-server:
-  port: :8081
 datasource:
   mysql:
     host : 123.57.194.129
@@ -13,3 +11,5 @@ datasource:
     port: 6379
     password:
     DB: 0
+server:
+  port: :80
