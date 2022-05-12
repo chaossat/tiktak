@@ -24,7 +24,7 @@ var ossBucket *oss.Bucket
 //不使用集群，所以不使用MQ
 var MQ_channel = make(chan *VideoOBJ, 100)
 
-//获取oss的Client
+//GetClient:获取oss的Client
 func GetClient() *oss.Client {
 	if ossCli != nil {
 		return ossCli
@@ -37,7 +37,7 @@ func GetClient() *oss.Client {
 	return ossCli
 }
 
-//获取oss上Client的bucket存储空间
+//Bucket:获取oss上Client的bucket存储空间
 func Bucket() *oss.Bucket {
 	if ossBucket != nil {
 		return ossBucket
@@ -53,6 +53,16 @@ func Bucket() *oss.Bucket {
 	}
 	ossBucket = bucket
 	return ossBucket
+}
+
+//GetURL:根据视频地址返回可播放的URL
+func GetURL(filePath string) string {
+	URL, err := Bucket().SignURL(filePath, oss.HTTPGet, 3600)
+	if err != nil {
+		fmt.Println("Error Occoured While Getting Video URL!", err.Error())
+		return ""
+	}
+	return URL
 }
 
 //Init:持续消费MQ_channel里的转存请求

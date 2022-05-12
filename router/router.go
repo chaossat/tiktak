@@ -9,10 +9,11 @@ import (
 
 //TODO:设置路由规则
 func Init(r *gin.Engine) {
-	r.StaticFS("tempvideo", http.Dir("./tempfile")) //设置静态资源
+	r.StaticFS("tempfile", http.Dir("./tempfile")) //设置静态资源
 	//设置分组路由规则
 	douyin := r.Group("/douyin")
 	{
+		douyin.GET("/osstest", controller.GetURL) //临时测试地址
 		publish := douyin.Group("/publish")
 		{
 			publish.POST("action", controller.UploadHandler)

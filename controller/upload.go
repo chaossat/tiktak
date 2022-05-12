@@ -21,9 +21,14 @@ import (
 func UploadHandler(ctx *gin.Context) {
 	//根据token鉴权，并获取userID
 	token := ctx.PostForm("token")
-	info := common.GetRDB().Get(token).Val()
+	info, err := common.GetRDB().Get(token).Result()
+	if err != nil {
+		fmt.Printf("Failed to get verify info, err:%s\n", err.Error())
+		UploadResponse(ctx, 1, "Error Occoured!")
+		return
+	}
 	userinfo := &model.User_info{}
-	err := json.Unmarshal([]byte(info), userinfo)
+	err = json.Unmarshal([]byte(info), userinfo)
 	if err != nil {
 		fmt.Printf("Failed to get verify info, err:%s\n", err.Error())
 		UploadResponse(ctx, -1, "Error Occoured!")
@@ -60,7 +65,7 @@ func UploadHandler(ctx *gin.Context) {
 	sha1 := util.Sha1(buf.Bytes())
 
 	//将文件写入临时存储位置
-	tempLocation := "./tempfile/" + sha1 // 临时存储地址
+	tempLocation := "./tempfile/" + sha1 + ".mp4" // 临时存储地址
 	newFile, err := os.Create(tempLocation)
 	if err != nil {
 		fmt.Printf("Failed to create file, err:%s\n", err.Error())
@@ -91,8 +96,8 @@ func UploadHandler(ctx *gin.Context) {
 	UploadResponse(ctx, 0, "Upload Succeed!")
 
 	//向通道压入转存请求
-	ossPath := "videos/" + sha1
-	videoMeta.Location = "oss:" + ossPath
+	ossPath := "videos/" + sha1 + ".mp4"
+	videoMeta.Location = ossPath
 	videoOBJ := &oss.VideoOBJ{
 		OssPath:   ossPath,
 		File:      newFile,
