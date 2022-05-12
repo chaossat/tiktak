@@ -1,0 +1,46 @@
+syntax = "proto2";
+package douyin.core;
+option go_package="../;pb";
+service publish{
+  rpc publish_video(douyin_publish_list_request)returns(douyin_publish_list_response){}
+}
+message douyin_publish_list_request {
+  required int64 user_id = 1; //用户id
+  required string token = 2;//用户鉴权token
+}
+message douyin_publish_list_response {
+  //状态码，0-成功，其他值-失败
+  required int32 status_code = 1;
+  //返回状态描述
+  optional string status_msg = 2;
+  //用户发布的视频列表
+  repeated Video video_list = 3;
+}
+message Video {
+  //视频唯─标识
+  required int64 id = 1;
+  //视频作者信息
+  required User author = 2;
+  //视频播放地址
+  required string play_url = 3;
+  //视频封面地址
+  required string cover_url = 4;
+  //视频的点赞总数
+  required int64 favorite_count = 5;
+  //视频的评论总数
+  required int64 comment_count = 6;
+  //true-已点赞，faLse-未点赞
+  required bool is_favorite = 7;
+}
+message User {
+  //用户id
+  required int64 id = 1;
+  //用户名称
+  required string name = 2;
+  //关注总数
+  optional int64 follow_count = 3;
+  //粉丝总数
+  optional int64 follower_count = 4;
+  // true-已关注，false-未关注
+  required bool is_follow = 5;
+}

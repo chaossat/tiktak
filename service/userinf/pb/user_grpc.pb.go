@@ -22,7 +22,7 @@ const _ = grpc.SupportPackageIsVersion7
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type UserInfClient interface {
-	DouyinUserRequest(ctx context.Context, in *User, opts ...grpc.CallOption) (*DouyinUserResponse, error)
+	GetUserinf(ctx context.Context, in *DouyinUserRequest, opts ...grpc.CallOption) (*DouyinUserResponse, error)
 }
 
 type userInfClient struct {
@@ -33,9 +33,9 @@ func NewUserInfClient(cc grpc.ClientConnInterface) UserInfClient {
 	return &userInfClient{cc}
 }
 
-func (c *userInfClient) DouyinUserRequest(ctx context.Context, in *User, opts ...grpc.CallOption) (*DouyinUserResponse, error) {
+func (c *userInfClient) GetUserinf(ctx context.Context, in *DouyinUserRequest, opts ...grpc.CallOption) (*DouyinUserResponse, error) {
 	out := new(DouyinUserResponse)
-	err := c.cc.Invoke(ctx, "/douyin.core.UserInf/douyin_user_request", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/douyin.core.UserInf/GetUserinf", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -46,7 +46,7 @@ func (c *userInfClient) DouyinUserRequest(ctx context.Context, in *User, opts ..
 // All implementations must embed UnimplementedUserInfServer
 // for forward compatibility
 type UserInfServer interface {
-	DouyinUserRequest(context.Context, *User) (*DouyinUserResponse, error)
+	GetUserinf(context.Context, *DouyinUserRequest) (*DouyinUserResponse, error)
 	mustEmbedUnimplementedUserInfServer()
 }
 
@@ -54,8 +54,8 @@ type UserInfServer interface {
 type UnimplementedUserInfServer struct {
 }
 
-func (UnimplementedUserInfServer) DouyinUserRequest(context.Context, *User) (*DouyinUserResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method DouyinUserRequest not implemented")
+func (UnimplementedUserInfServer) GetUserinf(context.Context, *DouyinUserRequest) (*DouyinUserResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetUserinf not implemented")
 }
 func (UnimplementedUserInfServer) mustEmbedUnimplementedUserInfServer() {}
 
@@ -70,20 +70,20 @@ func RegisterUserInfServer(s grpc.ServiceRegistrar, srv UserInfServer) {
 	s.RegisterService(&UserInf_ServiceDesc, srv)
 }
 
-func _UserInf_DouyinUserRequest_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(User)
+func _UserInf_GetUserinf_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DouyinUserRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(UserInfServer).DouyinUserRequest(ctx, in)
+		return srv.(UserInfServer).GetUserinf(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/douyin.core.UserInf/douyin_user_request",
+		FullMethod: "/douyin.core.UserInf/GetUserinf",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(UserInfServer).DouyinUserRequest(ctx, req.(*User))
+		return srv.(UserInfServer).GetUserinf(ctx, req.(*DouyinUserRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -96,8 +96,8 @@ var UserInf_ServiceDesc = grpc.ServiceDesc{
 	HandlerType: (*UserInfServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
-			MethodName: "douyin_user_request",
-			Handler:    _UserInf_DouyinUserRequest_Handler,
+			MethodName: "GetUserinf",
+			Handler:    _UserInf_GetUserinf_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
