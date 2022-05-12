@@ -10,8 +10,8 @@ import (
 type PublistServer struct {
 	pb.UnimplementedPublishServer
 }
-// 发布video
-func (this*PublistServer) PublishVideo(ctx context.Context,req *pb.DouyinPublishListRequest) (*pb.DouyinPublishListResponse, error) {
+// 获取发布的video列表
+func (this*PublistServer) Publist(ctx context.Context,req *pb.DouyinPublishListRequest) (*pb.DouyinPublishListResponse, error) {
 	// token验证
 	_,err:=middleware.CheckToken(*req.Token)
 	if err!=nil{

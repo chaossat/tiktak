@@ -41,13 +41,11 @@ func (this*UserInf) GetUserinf(context context.Context, request *pb.DouyinUserRe
 	}
 	// 用户信息结构体
 	var isFollow=false
-	var follow_count int64=int64(inf.Follow_count)
-	var follower_count int64=int64(inf.Follower_count)
 	var user=pb.User{
 		Id:            uid,
 		Name:          &inf.Name,
-		FollowCount:   &follow_count,
-		FollowerCount: &follower_count,
+		FollowCount:   &inf.Follow_count,
+		FollowerCount: &inf.Follower_count,
 		IsFollow:      &isFollow,
 	}
 	var code int32=0
