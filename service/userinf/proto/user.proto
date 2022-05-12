@@ -8,7 +8,7 @@ message douyin_user_request {
   required string token = 2;
 }
 message douyin_user_response {
-  //状态码，o-成功，其他值-失败
+  //状态码，0-成功，其他值-失败
   required int32 status_code = 1;
   //返回状态描述
   optional string status_msg = 2;
