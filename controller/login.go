@@ -20,19 +20,19 @@ func LoginHandler(ctx *gin.Context) {
 		return
 	}
 	if !ok {
-		LoginResponse(ctx, 0, "Login Failed!", 0, "userVerifyInfo.Token")
+		LoginResponse(ctx, -2, "Login Failed!", 0, "")
 		return
 	}
 	err, userinfo := db.UserInfoByName(username)
 	if err != nil {
 		fmt.Println(err.Error())
-		LoginResponse(ctx, -2, "Error Occoured!", 0, "")
+		LoginResponse(ctx, -3, "Error Occoured!", 0, "")
 		return
 	}
-	token, err := middleware.CreateToken(strconv.Itoa(userinfo.ID))
+	token, err := middleware.CreateToken(strconv.Itoa(int(userinfo.ID)))
 	if err != nil {
 		fmt.Println(err.Error())
-		LoginResponse(ctx, -3, "Error Occoured!", 0, "")
+		LoginResponse(ctx, -4, "Error Occoured!", 0, "")
 		return
 	}
 	// err, token := db.CreateToken(&userinfo)
@@ -41,7 +41,7 @@ func LoginHandler(ctx *gin.Context) {
 	// 	LoginResponse(ctx, -3, "Error Occoured!", 0, "")
 	// 	return
 	// }
-	LoginResponse(ctx, 0, "Login Succeed!", userinfo.ID, token)
+	LoginResponse(ctx, 0, "Login Succeed!", int(userinfo.ID), token)
 }
 
 //LoginResponse:返回登录处理信息
