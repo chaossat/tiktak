@@ -6,6 +6,7 @@ import (
 	"encoding/hex"
 	"fmt"
 	"net"
+	"os/exec"
 	"strings"
 )
 
@@ -48,4 +49,9 @@ func GetIP() (ip string) {
 	localAddr := conn.LocalAddr().(*net.UDPAddr)
 	ip = strings.Split(localAddr.String(), ":")[0]
 	return
+}
+
+//CoverGenerator:为视频截取第一帧作为封面，需要安装ffmpeg环境
+func CoverGenerator(videoPath string, coverName string) {
+	exec.Command("ffmpeg", "-i", videoPath, "tempimage/"+coverName).Run()
 }

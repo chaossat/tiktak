@@ -21,16 +21,16 @@ type User struct {
 
 // 根据数据库中的user_info，构建并返回User_info_dto
 func Dto_user_info(user *model.User_info) User_info_dto {
-	user_inf:=User{
-		id:             user.ID,
+	user_inf := User{
+		id:             int(user.ID),
 		name:           user.Name,
-		follow_count:   user.Follow_count,
-		follower_count: user.Follower_count,
+		follow_count:   int(user.Follow_count),
+		follower_count: int(user.Follower_count),
 		is_follow:      false,
 	}
 	return User_info_dto{
 		code: 200,
-		msg: "success",
+		msg:  "success",
 		user: user_inf,
 	}
 }

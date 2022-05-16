@@ -15,6 +15,7 @@ import (
 //通信结构体
 type VideoOBJ struct {
 	File      *os.File
+	Cover     *os.File
 	VideoMeta model.Video
 }
 
@@ -84,22 +85,35 @@ func Redeposit(video *VideoOBJ) {
 	err := Bucket().PutObject(video.VideoMeta.Location, video.File)
 	video.File.Close()
 	if err != nil {
-		fmt.Printf("Failed while pushing to oss, err:%s\n", err.Error())
+		fmt.Printf("Failed while pushing to oss -1, err:%s\n", err.Error())
+		return
+	}
+	err = Bucket().PutObject(video.VideoMeta.Cover_location, video.Cover)
+	video.Cover.Close()
+	if err != nil {
+		fmt.Printf("Failed while pushing to oss -2, err:%s\n", err.Error())
 		return
 	}
 	err = db.VideoLocationUpdate(&(video.VideoMeta))
 	if err != nil {
-		fmt.Printf("Failed to update mysql, err:%s\n", err.Error())
+		fmt.Printf("Failed to update mysql -1, err:%s\n", err.Error())
 		return
 	}
-	delete("./tempfile/" + video.VideoMeta.Location[7:])
+	err = db.CoverLocationUpdate(&video.VideoMeta)
+	if err != nil {
+		fmt.Printf("Failed to update mysql -2, err:%s\n", err.Error())
+		return
+	}
+	delete("./tempfile/"+video.VideoMeta.Location[7:], "./tempimage/"+video.VideoMeta.Cover_location[7:])
 }
 
 //delete:转存成功后，文件仍将在本地暂存1小时后删除
-func delete(filePath string) {
+func delete(filePath ...string) {
 	time.Sleep(time.Hour)
-	err := os.Remove(filePath)
-	if err != nil {
-		fmt.Printf("Failed to delete local file, err:%s\n", err.Error())
+	for _, j := range filePath {
+		err := os.Remove(j)
+		if err != nil {
+			fmt.Printf("Failed to delete local file, err:%s\n", err.Error())
+		}
 	}
 }

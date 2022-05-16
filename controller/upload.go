@@ -33,23 +33,6 @@ func UploadHandler(ctx *gin.Context) {
 		UploadResponse(ctx, -2, "Error Occoured!")
 		return
 	}
-	// info, err := common.GetRDB().Get(token).Result()
-	// if err != nil {
-	// 	fmt.Printf("Failed to get verify info, err:%s\n", err.Error())
-	// 	UploadResponse(ctx, 1, "Error Occoured!")
-	// 	return
-	// }
-	// userinfo := &model.User_info{}
-	// err = json.Unmarshal([]byte(info), userinfo)
-	// if err != nil {
-	// 	fmt.Printf("Failed to get verify info, err:%s\n", err.Error())
-	// 	UploadResponse(ctx, -1, "Error Occoured!")
-	// 	return
-	// }
-	// if userinfo.ID == 0 {
-	// 	UploadResponse(ctx, -2, "Invalid Token,Please Relogin!")
-	// 	return
-	// }
 
 	//获取文件
 	file, header, err := ctx.Request.FormFile("data")
@@ -91,11 +74,15 @@ func UploadHandler(ctx *gin.Context) {
 		UploadResponse(ctx, -7, "Error Occoured!")
 		return
 	}
+	//为视频生成封面
+	util.CoverGenerator(tempLocation[2:], sha1+".jpg")
+	//将视频信息存入数据库
 	videoMeta := model.Video{
-		Title:      header.Filename[:len(header.Filename)-4],
-		AuthorID:   userID,
-		UpdateTime: int(time.Now().Unix()),
-		Location:   tempLocation[2:],
+		Title:          header.Filename[:len(header.Filename)-4],
+		AuthorID:       userID,
+		UpdateTime:     int(time.Now().Unix()),
+		Cover_location: "tempimage/" + sha1 + ".jpg",
+		Location:       tempLocation[2:],
 	}
 	err = db.VideoUpload(&videoMeta)
 	if err != nil {
@@ -109,9 +96,17 @@ func UploadHandler(ctx *gin.Context) {
 
 	//向通道压入转存请求
 	ossPath := "videos/" + sha1 + ".mp4"
+	ossImagePath := "images/" + sha1 + ".jpg"
 	videoMeta.Location = ossPath
+	videoMeta.Cover_location = ossImagePath
+	cover, err := os.Open("./tempimage/" + sha1 + ".jpg")
+	if err != nil {
+		fmt.Printf("Failed to open cover file, err:%s\n", err.Error())
+		return
+	}
 	videoOBJ := &oss.VideoOBJ{
 		File:      newFile,
+		Cover:     cover,
 		VideoMeta: videoMeta,
 	}
 	oss.MQ_channel <- videoOBJ
