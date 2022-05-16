@@ -1,0 +1,19 @@
+syntax = "proto2";
+package douyin.core;
+
+option go_package="../pb";
+service upload{
+  rpc upload(douyin_publish_action_request)returns(douyin_publish_action_response){}
+}
+
+
+message douyin_publish_action_request{
+    required int64 user_id =1; //用户id
+    required string token =2;//用户鉴权token
+    required bytes data=3;//视频数据
+}
+
+message douyin_publish_action_response{
+    required int32 status_code=1;//状态码，0-成功，其他值-失败
+    optional string status_msg=2;//返回状态描述
+}

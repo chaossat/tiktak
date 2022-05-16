@@ -2,7 +2,6 @@ package controller
 
 import (
 	"fmt"
-	"strconv"
 
 	"github.com/chaossat/tiktak/db"
 	"github.com/chaossat/tiktak/middleware"
@@ -29,18 +28,12 @@ func LoginHandler(ctx *gin.Context) {
 		LoginResponse(ctx, -3, "Error Occoured!", 0, "")
 		return
 	}
-	token, err := middleware.CreateToken(strconv.Itoa(int(userinfo.ID)))
+	token, err := middleware.CreateToken(int(userinfo.ID))
 	if err != nil {
 		fmt.Println(err.Error())
 		LoginResponse(ctx, -4, "Error Occoured!", 0, "")
 		return
 	}
-	// err, token := db.CreateToken(&userinfo)
-	// if err != nil {
-	// 	fmt.Println(err.Error())
-	// 	LoginResponse(ctx, -3, "Error Occoured!", 0, "")
-	// 	return
-	// }
 	LoginResponse(ctx, 0, "Login Succeed!", int(userinfo.ID), token)
 }
 

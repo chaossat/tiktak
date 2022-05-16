@@ -3,6 +3,7 @@ package middleware
 import (
 	"errors"
 	"log"
+	"strconv"
 	"time"
 
 	"github.com/dgrijalva/jwt-go"
@@ -25,7 +26,8 @@ func getkey() string {
 }
 
 //生成一个token
-func CreateToken(userID string) (string, error) {
+func CreateToken(ID int) (string, error) {
+	userID := strconv.Itoa(ID)
 	//到期时间
 	expireTime := time.Now().Add(24 * 30 * time.Hour)
 	SetClaims := MyClaims{

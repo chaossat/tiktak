@@ -1,6 +1,6 @@
 syntax = "proto2";
 package douyin.core;
-option go_package="../;pb";
+option go_package="../pb";
 service publish{
   rpc publish_video(douyin_publish_list_request)returns(douyin_publish_list_response){}
 }

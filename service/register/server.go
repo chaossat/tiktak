@@ -2,15 +2,16 @@ package register
 
 import (
 	"context"
+	"log"
+	"net"
+	"os"
+
 	"github.com/chaossat/tiktak/middleware"
 	"github.com/chaossat/tiktak/service/register/model"
 	"github.com/chaossat/tiktak/service/register/pb"
 	"github.com/chaossat/tiktak/util"
 	"github.com/spf13/viper"
 	"google.golang.org/grpc"
-	"log"
-	"net"
-	"os"
 )
 
 type Register struct{}
@@ -48,7 +49,7 @@ func (this *Register) Register(ctx context.Context, req *pb.DouyinUserRegisterRe
 			Token:      &token,
 		}, nil
 	}
-	token, err = middleware.CreateToken(username)
+	token, err = middleware.CreateToken(int(user.ID))
 	if err != nil {
 		log.Println("生成token失败", err.Error())
 		statuscode = 1
@@ -86,6 +87,7 @@ func InitConfig() {
 	}
 }
 
+//cannot run non-main package
 func main() {
 	InitConfig()
 	model.InitDB()
