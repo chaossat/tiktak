@@ -27,7 +27,7 @@ func UploadHandler(ctx *gin.Context) {
 		UploadResponse(ctx, -1, "Invalid Token!")
 		return
 	}
-	userID, err := strconv.Atoi(user.UserID)
+	userID, err := strconv.ParseInt(user.UserID, 10, 64)
 	if err != nil {
 		fmt.Printf("Failed To Trans UserID, err:%s\n", err.Error())
 		UploadResponse(ctx, -2, "Error Occoured!")
@@ -80,7 +80,7 @@ func UploadHandler(ctx *gin.Context) {
 	videoMeta := model.Video{
 		Title:          header.Filename[:len(header.Filename)-4],
 		AuthorID:       userID,
-		UpdateTime:     int(time.Now().Unix()),
+		UpdateTime:     time.Now().Unix(),
 		Cover_location: "tempimage/" + sha1 + ".jpg",
 		Location:       tempLocation[2:],
 	}
