@@ -7,7 +7,6 @@ import (
 	"github.com/spf13/viper"
 	"log"
 	"net/http"
-	"strconv"
 	"strings"
 	"time"
 )
@@ -16,7 +15,7 @@ import (
 
 //载荷
 type MyClaims struct {
-	UserID string `json:"userID"`
+	UserID int64 `json:"userID"`
 	jwt.StandardClaims
 }
 
@@ -28,8 +27,8 @@ func getkey() string {
 }
 
 //生成一个token
-func CreateToken(ID int) (string, error) {
-	userID := strconv.Itoa(ID)
+func CreateToken(ID int64) (string, error) {
+	userID := ID
 	//到期时间
 	expireTime := time.Now().Add(24 * 30 * time.Hour)
 	SetClaims := MyClaims{
