@@ -28,7 +28,7 @@ func LoginHandler(ctx *gin.Context) {
 		LoginResponse(ctx, -3, "Error Occoured!", 0, "")
 		return
 	}
-	token, err := middleware.CreateToken(int(userinfo.ID))
+	token, err := middleware.CreateToken(userinfo.ID)
 	if err != nil {
 		fmt.Println(err.Error())
 		LoginResponse(ctx, -4, "Error Occoured!", 0, "")

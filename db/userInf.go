@@ -12,10 +12,10 @@ func UserInfoUpdate(info *model.User_info) error {
 }
 
 // 查询用户信息根据id
-func UserInfoById(id int) (error, model.User_info) {
+func UserInfoById(id int) (model.User_info, error) {
 	inf := model.User_info{}
 	err := common.GetDB().Where("id=?", id).First(&inf).Error
-	return err, inf
+	return inf, err
 }
 
 // 查询用户信息根据用户名
@@ -39,10 +39,8 @@ func UserInfoRegister(name string, pwd string) error {
 	// 密码做md5
 	pwd_md5 := util.MD5V(pwd)
 	inf := model.User_info{
-		Name:           name,
-		Follow_count:   0,
-		Follower_count: 0,
-		Password_Hash:  pwd_md5,
+		Name:          name,
+		Password_Hash: pwd_md5,
 	}
 	err := common.GetDB().Create(&inf).Error
 	return err

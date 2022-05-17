@@ -26,3 +26,11 @@ func VideoedByID(uid int) ([]*model.Video, error) {
 	err := common.GetDB().Where("author_id=?", uid).Find(&videoes).Error
 	return videoes, err
 }
+
+//VideoCountByID:根据用户id获取发布的视频数量
+func VideoCountByID(uid int) (int, error) {
+	// user := &model.User_info{}
+	// err := common.GetDB().Preload("Videos").Where("id = ?", uid).Find(user).Error
+	// return len(user.Videos), err
+	return 0, nil
+}

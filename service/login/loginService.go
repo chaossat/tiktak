@@ -30,7 +30,7 @@ func (loginHandler *LoginHandler) Login(ctx context.Context, loginRequest *pb.Do
 		fmt.Println(err.Error())
 		return LoginResponse(-3, "Error Occoured!", 0, ""), nil
 	}
-	token, err := middleware.CreateToken(int(userinfo.ID))
+	token, err := middleware.CreateToken(userinfo.ID)
 	if err != nil {
 		fmt.Println(err.Error())
 		return LoginResponse(-4, "Error Occoured!", 0, ""), nil

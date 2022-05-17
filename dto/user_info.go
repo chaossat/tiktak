@@ -24,8 +24,8 @@ func Dto_user_info(user *model.User_info) User_info_dto {
 	user_inf := User{
 		id:             int(user.ID),
 		name:           user.Name,
-		follow_count:   int(user.Follow_count),
-		follower_count: int(user.Follower_count),
+		follow_count:   00000000000000, //待修改
+		follower_count: 00000000000000, //待修改
 		is_follow:      false,
 	}
 	return User_info_dto{

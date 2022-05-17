@@ -1,0 +1,12 @@
+完成以下函数：
+video.go:
+    VideoCountByID
+favorate.go:
+    FavorateCountByID
+    IsFavorate
+follow.go:
+    FollowCountByID
+    FollowerCountByID
+comment.go:
+    CommentsByVID
+    CommentCountByVID

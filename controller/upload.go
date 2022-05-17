@@ -6,7 +6,6 @@ import (
 	"io"
 	"os"
 	"path"
-	"strconv"
 	"time"
 
 	"github.com/chaossat/tiktak/db"
@@ -27,12 +26,7 @@ func UploadHandler(ctx *gin.Context) {
 		UploadResponse(ctx, -1, "Invalid Token!")
 		return
 	}
-	userID, err := strconv.ParseInt(user.UserID, 10, 64)
-	if err != nil {
-		fmt.Printf("Failed To Trans UserID, err:%s\n", err.Error())
-		UploadResponse(ctx, -2, "Error Occoured!")
-		return
-	}
+	userID := user.UserID
 
 	//获取文件
 	file, header, err := ctx.Request.FormFile("data")
