@@ -9,6 +9,6 @@ type Video struct {
 	Location       string //储存位置
 	Cover_location string //封面储存位置
 	PlayLocation   string //视频播放地址
-	//视频评论，通过评论表的用户id作为外键关联
-	Comments []Comment `gorm:"foreignkey:UserID"` //视频的评论
+	//视频评论，通过评论表的视频id作为外键关联
+	Comments []Comment `gorm:"foreignkey:VideoID"` //视频的评论
 }
