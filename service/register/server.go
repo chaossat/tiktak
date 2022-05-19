@@ -49,7 +49,7 @@ func (this *Register) Register(ctx context.Context, req *pb.DouyinUserRegisterRe
 			Token:      &token,
 		}, nil
 	}
-	token, err = middleware.CreateToken(int(user.ID))
+	token, err = middleware.CreateToken(user.ID)
 	if err != nil {
 		log.Println("生成token失败", err.Error())
 		statuscode = 1

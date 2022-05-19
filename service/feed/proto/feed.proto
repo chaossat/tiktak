@@ -1,10 +1,11 @@
 syntax="proto2";
 package douyin.core;
 
-option go_package = "/pb";
+option go_package = "../pb";
 
 message douyin_feed_request{
   optional int64 latest_time = 1; //可选参数，限制返回视频的最新投稿时间
+  optional string token = 2;
 }
 
 message douyin_feed_response {
@@ -22,6 +23,7 @@ message Video {
   required int64 favorite_count = 5;  //视频的点赞总数
   required int64 comment_count = 6; //视频的评论总数
   required bool is_favorite = 7;  //true-已点赞， false-未点赞
+  required string title = 8;  //视频标题
 }
 
 message User {
