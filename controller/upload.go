@@ -20,6 +20,7 @@ import (
 func UploadHandler(ctx *gin.Context) {
 	//根据token鉴权，并获取userID
 	token := ctx.PostForm("token")
+	title := ctx.PostForm("title")
 	user, err := middleware.CheckToken(token)
 	if err != nil {
 		fmt.Printf("Failed To Verify Token, err:%s\n", err.Error())
@@ -72,7 +73,7 @@ func UploadHandler(ctx *gin.Context) {
 	util.CoverGenerator(tempLocation[2:], sha1+".jpg")
 	//将视频信息存入数据库
 	videoMeta := model.Video{
-		Title:          header.Filename[:len(header.Filename)-4],
+		Title:          title,
 		AuthorID:       userID,
 		UpdateTime:     time.Now().Unix(),
 		Cover_location: "tempimage/" + sha1 + ".jpg",

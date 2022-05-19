@@ -26,14 +26,14 @@ func (this *PublistServer) Publist(ctx context.Context, req *pb.DouyinPublishLis
 			VideoList:  nil,
 		}, nil
 	}
-	err, userinf := db.UserInfoById(int(*req.UserId))
+	userinf, err := db.UserInfoById(int(*req.UserId))
 	//TODO:消费err
 	videoes, err := db.VideoedByID(int(*req.UserId))
 	//TODO:消费err
 	isfollow := false
 	var user = pb.User{
 		Id:            &userinf.ID,
-		Name:          &userinf.Name,
+		Name:          &userinf.Username,
 		FollowCount:   &userinf.Follow_count,
 		FollowerCount: &userinf.Follower_count,
 		IsFollow:      &isfollow,

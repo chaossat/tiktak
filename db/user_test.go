@@ -1,11 +1,12 @@
 package db
 
 import (
+	"log"
+	"testing"
+
 	"github.com/chaossat/tiktak/common"
 	"github.com/chaossat/tiktak/model"
 	"github.com/spf13/viper"
-	"log"
-	"testing"
 )
 
 func TestUser_Upload(t *testing.T) {
@@ -14,27 +15,25 @@ func TestUser_Upload(t *testing.T) {
 	// 加载数据库
 	common.InitDB()
 	// 上传数据
-	err:= UserInfoRegister("xiaom","wajjxuexianajiaq")
-	if err!=nil{
+	err := UserInfoRegister("xiaom", "wajjxuexianajiaq")
+	if err != nil {
 		log.Println(err)
 	}
 }
 
-func TestUser_Update(t *testing.T){
+func TestUser_Update(t *testing.T) {
 	// 定义结构体
-	ds:=&model.User_info{
-		ID: 2,
-		Name:             "测试二号更新",
-		Follow_count:     0,
-		Follower_count:   0,
+	ds := &model.User{
+		ID:       2,
+		Username: "测试二号更新",
 	}
 	// 加载配置
 	InitConfig()
 	// 加载数据库
 	common.InitDB()
 	// 更新数据
-	err:=UserInfoUpdate(ds)
-	if err!=nil{
+	err := UserInfoUpdate(ds)
+	if err != nil {
 		log.Println(err)
 	}
 }
@@ -45,10 +44,10 @@ func TestUserInfoByName(t *testing.T) {
 	// 加载数据库
 	common.InitDB()
 	// 查询用户信息根据名称
-	err,inf:=UserInfoByName("xiaom")
-	if err!=nil{
+	err, inf := UserInfoByName("xiaom")
+	if err != nil {
 		log.Println(err)
-	}else{
+	} else {
 		log.Println(inf)
 	}
 }
@@ -59,13 +58,14 @@ func TestUserInfoById(t *testing.T) {
 	// 加载数据库
 	common.InitDB()
 	// 查询用户信息根据名称
-	err,inf:=UserInfoById(2)
-	if err!=nil{
+	inf, err := UserInfoById(2)
+	if err != nil {
 		log.Println(err)
-	}else{
+	} else {
 		log.Println(inf)
 	}
 }
+
 //func TestName(t *testing.T) {
 //	// 加载配置
 //	InitConfig()
@@ -73,7 +73,6 @@ func TestUserInfoById(t *testing.T) {
 //	common.InitDB()
 //	migration.SetAutoMigrate(common.GetDB())
 //}
-
 
 func InitConfig() {
 	//workDir, _ := os.Getwd()

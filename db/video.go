@@ -1,6 +1,8 @@
 package db
 
 import (
+	"errors"
+
 	"github.com/chaossat/tiktak/common"
 	"github.com/chaossat/tiktak/model"
 )
@@ -20,17 +22,27 @@ func CoverLocationUpdate(video *model.Video) error {
 	return common.GetDB().Model(video).Where("id = ?", video.ID).Update("Cover_location", video.Cover_location).Error
 }
 
-//VideoedByID：根据用户id找到这个用户已发布的视频列表
+//VideoedByID：根据用户id找到这个用户已发布的视频列表,根据接口要求，直接按时间倒序列出所有视频
 func VideoedByID(uid int) ([]*model.Video, error) {
-	var videoes = []*model.Video{}
-	err := common.GetDB().Where("author_id=?", uid).Find(&videoes).Error
-	return videoes, err
+	var videos = []*model.Video{}
+	err := common.GetDB().Where("author_id=?", uid).Order("update_time desc").Find(&videos).Error
+	return videos, err
+}
+
+//GetVideos:根据输入的时间戳，返回在该时间戳之前的 30个最新视频
+func GetVideos(timeStamp int64) ([]*model.Video, error) {
+	var videos []*model.Video
+	err := common.GetDB().Where("update_time < ?", timeStamp).Order("update_time desc").Limit(30).Find(&videos).Error
+	return videos, err
 }
 
 //VideoCountByID:根据用户id获取发布的视频数量
 func VideoCountByID(uid int) (int, error) {
-	// user := &model.User_info{}
-	// err := common.GetDB().Preload("Videos").Where("id = ?", uid).Find(user).Error
-	// return len(user.Videos), err
-	return 0, nil
+	user := &model.User{}
+	common.GetDB().Where("id = ?", uid).First(user)
+	if user.ID == 0 {
+		return -1, errors.New("no such user")
+	}
+	cnt := common.GetDB().Model(user).Association("Videos").Count()
+	return cnt, nil
 }

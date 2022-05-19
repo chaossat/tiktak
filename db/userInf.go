@@ -7,21 +7,21 @@ import (
 )
 
 // 更新用户信息
-func UserInfoUpdate(info *model.User_info) error {
+func UserInfoUpdate(info *model.User) error {
 	return common.GetDB().Model(info).Where("id=?", info.ID).Update(info).Error
 }
 
 // 查询用户信息根据id
-func UserInfoById(id int) (model.User_info, error) {
-	inf := model.User_info{}
+func UserInfoById(id int) (model.User, error) {
+	inf := model.User{}
 	err := common.GetDB().Where("id=?", id).First(&inf).Error
 	return inf, err
 }
 
 // 查询用户信息根据用户名
-func UserInfoByName(name string) (error, model.User_info) {
-	inf := model.User_info{}
-	err := common.GetDB().Where("name=?", name).First(&inf).Error
+func UserInfoByName(name string) (error, model.User) {
+	inf := model.User{}
+	err := common.GetDB().Where("username=?", name).First(&inf).Error
 	return err, inf
 }
 
@@ -30,7 +30,7 @@ func UserLogin(name string, pwd string) (bool, error) {
 	p := 0
 	// 密码做MD5
 	pwd_md5 := util.MD5V(pwd)
-	err := common.GetDB().Where("name=? and password_hash=?", name, pwd_md5).Count(&p).Error
+	err := common.GetDB().Where("username=? and password_hash=?", name, pwd_md5).Count(&p).Error
 	return p == 1, err
 }
 
@@ -38,8 +38,8 @@ func UserLogin(name string, pwd string) (bool, error) {
 func UserInfoRegister(name string, pwd string) error {
 	// 密码做md5
 	pwd_md5 := util.MD5V(pwd)
-	inf := model.User_info{
-		Name:          name,
+	inf := model.User{
+		Username:      name,
 		Password_Hash: pwd_md5,
 	}
 	err := common.GetDB().Create(&inf).Error

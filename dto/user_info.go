@@ -20,10 +20,10 @@ type User struct {
 }
 
 // 根据数据库中的user_info，构建并返回User_info_dto
-func Dto_user_info(user *model.User_info) User_info_dto {
+func Dto_user_info(user *model.User) User_info_dto {
 	user_inf := User{
 		id:             int(user.ID),
-		name:           user.Name,
+		name:           user.Username,
 		follow_count:   00000000000000, //待修改
 		follower_count: 00000000000000, //待修改
 		is_follow:      false,

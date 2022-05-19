@@ -1,6 +1,6 @@
 package model
 
-//User_info:用户信息
+//User:用户信息
 type User struct {
 	ID            int64 `gorm:"column:id;primary_key;AUTO_INCREMENT;not null"`
 	Username      string
