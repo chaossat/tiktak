@@ -2,6 +2,7 @@ package db
 
 import (
 	"errors"
+	"fmt"
 
 	"github.com/chaossat/tiktak/common"
 	"github.com/chaossat/tiktak/model"
@@ -27,4 +28,17 @@ func FollowerCountByID(uid int) (int, error) {
 	}
 	cnt := common.GetDB().Model(user).Association("Followers").Count()
 	return cnt, nil
+}
+
+//判断是否已关注作者
+func IsFollow(user, author model.User) (bool, error) {
+	//var user, author User
+	//Db.Where("id = ?", userid).First(&user)
+	//Db.Where("id = ?", authorid).First(&author)
+	err := common.GetDB().Model(&user).Association("Follows").Find(&author).Error
+	if err != nil {
+		fmt.Println("查询是否已关注错误", err)
+		return false, err
+	}
+	return true, nil
 }

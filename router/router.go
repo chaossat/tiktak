@@ -15,7 +15,7 @@ func Init(r *gin.Engine) {
 	//设置分组路由规则
 	douyin := r.Group("/douyin")
 	{
-		douyin.GET("/feed/", controller.Feed)
+		douyin.GET("/feed", controller.Feed)
 		user := douyin.Group("/user")
 		{
 			user.POST("/register/", controller.Register)
@@ -23,7 +23,7 @@ func Init(r *gin.Engine) {
 		}
 		douyin.Use(middleware.JwtToken())
 		douyin.GET("/osstest", controller.GetURL) //临时测试地址
-		douyin.GET("/feed", controller.VideoListHandler)
+		//douyin.GET("/feed", controller.VideoListHandler)
 		publish := douyin.Group("/publish")
 		{
 			publish.POST("action", controller.UploadHandler)

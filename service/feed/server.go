@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"github.com/chaossat/tiktak/middleware"
 	"github.com/chaossat/tiktak/service/feed/model"
 	"github.com/chaossat/tiktak/service/feed/pb"
 	"github.com/spf13/viper"
@@ -14,10 +15,148 @@ import (
 type Feed struct {
 }
 
-func (this *Feed) GetFeed(ctx context.Context, req *pb.DouyinFeedRequest) (*pb.DouyinFeedResponse, error) {
-	//latest_time := req.GetLatestTime() //int64
+//本次返回的视频中发布最早的时间，作为下次请求时的latest_time
+func GetNextTime(videos []model.Video) int64 {
+	ans := videos[0].UpdateTime
+	for _, video := range videos {
+		if ans < video.UpdateTime {
+			ans = video.UpdateTime
+		}
+	}
+	return ans
+}
 
-	return nil, nil
+//获取作者相关信息
+func GetAuthor(userid, authorid int64) pb.User {
+	var user model.User
+	var pbauthor pb.User
+	if userid != 0 {
+		var err error
+		user, err = model.GetUser(userid)
+		if err != nil {
+			log.Println("查询当前用户错误")
+			return pbauthor
+		}
+	}
+	author, err := model.GetUser(authorid)
+	if err != nil {
+		log.Println("查询视频作者错误")
+		return pbauthor
+	}
+	Id := author.ID
+	Name := author.Username
+	followcount := model.GetFollowCount(author)
+	FollowCount := followcount
+	followercount := model.GetFollowerCount(author)
+	FollowerCount := followercount
+	var isfollow bool
+	if userid == 0 {
+		isfollow = false
+	} else {
+		isfollow, err = model.IsFollow(user, author)
+		if err != nil {
+			log.Println("查询是否关注错误")
+			return pbauthor
+		}
+	}
+	IsFollow := isfollow
+	pbauthor = pb.User{
+		Id:            &Id,
+		Name:          &Name,
+		FollowCount:   &FollowCount,
+		FollowerCount: &FollowerCount,
+		IsFollow:      &IsFollow,
+	}
+	return pbauthor
+}
+
+func (this *Feed) GetFeed(ctx context.Context, req *pb.DouyinFeedRequest) (*pb.DouyinFeedResponse, error) {
+	var statuscode int32
+	var statusmsg string
+	var userid int64
+	if len(*req.Token) > 0 {
+		claims, err := middleware.CheckToken(*req.Token)
+		if err != nil {
+			log.Println("解析用户token失败", err.Error())
+			statuscode = 1
+			statusmsg = "解析用户token失败"
+			return &pb.DouyinFeedResponse{
+				StatusCode: &statuscode,
+				StatusMsg:  &statusmsg,
+			}, nil
+		}
+		userid = claims.UserID
+	} else {
+		userid = 0
+	}
+
+	video_list, err := model.GetVideoList(*req.LatestTime)
+	if err != nil {
+		statuscode = 1
+		statusmsg = "获取视频列表失败"
+		return &pb.DouyinFeedResponse{
+			StatusCode: &statuscode,
+			StatusMsg:  &statusmsg,
+		}, nil
+	}
+	var pbvideo_list []*pb.Video
+	for _, video := range video_list {
+		Id := video.ID
+		Title := video.Title
+		Author := GetAuthor(userid, video.AuthorID)
+		PlayUrl := video.PlayLocation
+		CoverUrl := video.Cover_location
+		favoritecnt, err := model.GetFavoriteCount(Id)
+		if err != nil {
+			log.Println("获取视频的点赞个数错误", err.Error())
+			statuscode = 1
+			statusmsg = "获取视频点赞失败"
+			return &pb.DouyinFeedResponse{
+				StatusCode: &statuscode,
+				StatusMsg:  &statusmsg,
+			}, nil
+		}
+		FavoriteCount := favoritecnt
+		commentcnt := model.GetCommentCount(video)
+		CommentCount := commentcnt
+		var isfavorite bool
+		if userid != 0 {
+			isfavorite, err = model.IsFavorite(userid, video.ID)
+			if err != nil {
+				log.Println("判断用户是否点赞当前视频错误")
+				statuscode = 1
+				statusmsg = "判断用户是否点赞当前视频错误"
+				return &pb.DouyinFeedResponse{
+					StatusCode: &statuscode,
+					StatusMsg:  &statusmsg,
+				}, nil
+			}
+		} else {
+			isfavorite = false
+		}
+
+		IsFavorite := isfavorite
+		pbvideo := pb.Video{
+			Id:            &Id,
+			Title:         &Title,
+			Author:        &Author,
+			PlayUrl:       &PlayUrl,
+			CoverUrl:      &CoverUrl,
+			FavoriteCount: &FavoriteCount,
+			CommentCount:  &CommentCount,
+			IsFavorite:    &IsFavorite,
+		}
+		pbvideo_list = append(pbvideo_list, &pbvideo)
+	}
+	statuscode = 0
+	statusmsg = "获取视频流成功"
+	nexttime := GetNextTime(video_list)
+	return &pb.DouyinFeedResponse{
+		StatusCode: &statuscode,
+		StatusMsg:  &statusmsg,
+		VideoList:  pbvideo_list,
+		NextTime:   &nexttime,
+	}, nil
 }
 
 func InitConfig() {
@@ -34,6 +173,7 @@ func InitConfig() {
 func main() {
 	InitConfig()
 	model.InitDB()
+	model.InitRedis()
 	//初始化grpc实例
 	grpcServer := grpc.NewServer()
 

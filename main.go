@@ -10,8 +10,6 @@ import (
 	"github.com/spf13/viper"
 )
 
-//TODO:在router.go中设置路由规则
-//TODO:补全代码
 func main() {
 	r := gin.Default()
 	InitConfig()
@@ -22,13 +20,12 @@ func main() {
 	panic(r.Run(port))
 }
 
+//InitConfig:初始化配置文件设置
 func InitConfig() {
 	workDir, _ := os.Getwd()
 	viper.SetConfigName("config.yml")
 	viper.SetConfigType("yml")
-	// 这里不需要加文件名
-	//viper.AddConfigPath(workDir + "/config.yml")
-	viper.AddConfigPath(workDir+"/config")
+	viper.AddConfigPath(workDir + "/config")
 	err := viper.ReadInConfig()
 	if err != nil {
 		panic(err)
