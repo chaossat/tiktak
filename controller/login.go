@@ -54,16 +54,20 @@ func LoginHandler(ctx *gin.Context) {
 	//初始化grpc客户端
 	grpcClient := pb.NewLoginClient(grpcConn)
 	//创建并初始化LoginRequest对象
-	var req *pb.DouyinUserLoginRequest
+	var req pb.DouyinUserLoginRequest
 	req.Username = &username
 	req.Password = &password
 
-	resp, err := grpcClient.Login(context.TODO(), req)
+	resp, err := grpcClient.Login(context.TODO(), &req)
 	fmt.Println("login resp:", resp)
 	if err != nil {
 		fmt.Println(err.Error())
 		fmt.Println("调用远程服务错误")
 		LoginResponse(ctx, -2, "Error Occoured!", 0, "")
+		return
+	}
+	if resp.GetStatusCode() != 0 {
+		LoginResponse(ctx, -3, resp.GetStatusMsg(), 0, "")
 		return
 	}
 	LoginResponse(ctx, 0, "Login Succeed!", int(resp.GetUserId()), resp.GetToken())

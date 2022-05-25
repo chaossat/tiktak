@@ -30,7 +30,7 @@ func UserLogin(name string, pwd string) (bool, error) {
 	p := 0
 	// 密码做MD5
 	pwd_md5 := util.MD5V(pwd)
-	err := common.GetDB().Where("username=? and password_hash=?", name, pwd_md5).Count(&p).Error
+	err := common.GetDB().Model(&model.User{}).Where("username=? and password_hash=?", name, pwd_md5).Count(&p).Error
 	return p == 1, err
 }
 
