@@ -2,14 +2,16 @@ package main
 
 import (
 	"context"
+	"log"
+	"net"
+	"os"
+
 	"github.com/chaossat/tiktak/middleware"
+	"github.com/chaossat/tiktak/oss"
 	"github.com/chaossat/tiktak/service/feed/model"
 	"github.com/chaossat/tiktak/service/feed/pb"
 	"github.com/spf13/viper"
 	"google.golang.org/grpc"
-	"log"
-	"net"
-	"os"
 )
 
 type Feed struct {
@@ -104,8 +106,8 @@ func (this *Feed) GetFeed(ctx context.Context, req *pb.DouyinFeedRequest) (*pb.D
 		Id := video.ID
 		Title := video.Title
 		Author := GetAuthor(userid, video.AuthorID)
-		PlayUrl := video.PlayLocation
-		CoverUrl := video.Cover_location
+		PlayUrl := oss.GetURL(video.PlayLocation)
+		CoverUrl := oss.GetURL(video.Cover_location)
 		favoritecnt, err := model.GetFavoriteCount(Id)
 		if err != nil {
 			log.Println("获取视频的点赞个数错误", err.Error())
@@ -160,7 +162,7 @@ func (this *Feed) GetFeed(ctx context.Context, req *pb.DouyinFeedRequest) (*pb.D
 }
 
 func InitConfig() {
-	workDir, _ := os.Getwd()
+	workDir, _ := os.Getwd() //获取当前工作路径，非文件路径，以终端显示路径为准
 	viper.SetConfigName("config")
 	viper.SetConfigType("yml")
 	viper.AddConfigPath(workDir + "/config")

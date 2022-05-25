@@ -22,7 +22,7 @@ func main() {
 
 //InitConfig:初始化配置文件设置
 func InitConfig() {
-	workDir, _ := os.Getwd()
+	workDir, _ := os.Getwd() //获取当前工作路径，非文件路径，以终端显示路径为准
 	viper.SetConfigName("config.yml")
 	viper.SetConfigType("yml")
 	viper.AddConfigPath(workDir + "/config")
