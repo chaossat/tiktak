@@ -59,6 +59,10 @@ func Bucket() *oss.Bucket {
 
 //GetURL:根据视频地址返回可播放的URL
 func GetURL(filePath string) string {
+	if len(filePath) == 0 {
+		fmt.Println("Empty Filepath Detected!")
+		return ""
+	}
 	//如果当前视频还未转存成功，返回临时视频地址
 	if filePath[0] == 't' {
 		return util.GetIP() + viper.GetString("server.port") + "/" + filePath

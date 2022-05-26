@@ -19,7 +19,7 @@ type Register struct{}
 func (this *Register) Register(ctx context.Context, req *pb.DouyinUserRegisterRequest) (*pb.DouyinUserRegisterResponse, error) {
 	username := req.GetUsername()
 	password := req.GetPassword()
-	password_hash := util.Sha1([]byte(password))
+	password_hash := util.MD5V(password)
 	user, err := model.SaveUser(username, password_hash)
 	var statuscode int32
 	var statusmsg string
