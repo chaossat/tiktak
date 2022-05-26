@@ -5,7 +5,7 @@ import (
 	"log"
 	"net"
 	"os"
-
+	"time"
 	"github.com/chaossat/tiktak/middleware"
 	"github.com/chaossat/tiktak/oss"
 	"github.com/chaossat/tiktak/service/feed/model"
@@ -19,6 +19,9 @@ type Feed struct {
 
 //本次返回的视频中发布最早的时间，作为下次请求时的latest_time
 func GetNextTime(videos []model.Video) int64 {
+	if len(videos)==0{
+		return time.Now().Unix()
+	}
 	ans := videos[0].UpdateTime
 	for _, video := range videos {
 		if ans < video.UpdateTime {
