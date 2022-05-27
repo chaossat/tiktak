@@ -20,10 +20,10 @@ type MyClaims struct {
 	jwt.StandardClaims
 }
 
-var jwtkey string
+var jwtkey []byte
 
-func getkey() string {
-	jwtkey = viper.GetString("secretkey")
+func getkey() []byte {
+	jwtkey = []byte(viper.GetString("secretkey"))
 	return jwtkey
 }
 
