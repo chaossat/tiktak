@@ -4,7 +4,6 @@ import (
 	"errors"
 	"log"
 	"net/http"
-	"strings"
 	"time"
 
 	"github.com/dgrijalva/jwt-go"
@@ -65,7 +64,7 @@ func CheckToken(token string) (*MyClaims, error) {
 //TODO:jwt中间件
 func JwtToken() gin.HandlerFunc {
 	return func(context *gin.Context) {
-		tokenHeader := context.Request.Header.Get("Authorization")
+		tokenHeader := context.PostForm("token")
 		if tokenHeader == "" {
 			context.JSON(http.StatusOK, gin.H{
 				"status_code": 1,
@@ -74,16 +73,16 @@ func JwtToken() gin.HandlerFunc {
 			context.Abort()
 			return
 		}
-		checktoken := strings.Split(tokenHeader, " ")
-		if len(checktoken) != 2 && checktoken[0] != "Bearer" {
-			context.JSON(http.StatusOK, gin.H{
-				"status_code": 1,
-				"status_msg":  "token格式错误",
-			})
-			context.Abort()
-			return
-		}
-		key, err := CheckToken(checktoken[1])
+		//checktoken := strings.Split(tokenHeader, " ")
+		//if len(checktoken) != 2 && checktoken[0] != "Bearer" {
+		//	context.JSON(http.StatusOK, gin.H{
+		//		"status_code": 1,
+		//		"status_msg":  "token格式错误",
+		//	})
+		//	context.Abort()
+		//	return
+		//}
+		key, err := CheckToken(tokenHeader)
 		if err != nil {
 			context.JSON(http.StatusOK, gin.H{
 				"status_code": 1,
@@ -100,7 +99,7 @@ func JwtToken() gin.HandlerFunc {
 			context.Abort()
 			return
 		}
-		context.Set("user_id", key.UserID)
+		//context.Set("user_id", key.UserID)
 		context.Next()
 	}
 }
