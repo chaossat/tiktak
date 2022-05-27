@@ -109,7 +109,7 @@ func (this *Feed) GetFeed(ctx context.Context, req *pb.DouyinFeedRequest) (*pb.D
 		Id := video.ID
 		Title := video.Title
 		Author := GetAuthor(userid, video.AuthorID)
-		PlayUrl := oss.GetURL(video.PlayLocation)
+		PlayUrl := oss.GetURL(video.Location)
 		CoverUrl := oss.GetURL(video.Cover_location)
 		favoritecnt := int64(0)
 		// favoritecnt, err := model.GetFavoriteCount(Id)
