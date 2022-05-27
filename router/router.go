@@ -4,7 +4,6 @@ import (
 	"net/http"
 
 	"github.com/chaossat/tiktak/controller"
-	"github.com/chaossat/tiktak/middleware"
 	"github.com/gin-gonic/gin"
 )
 
@@ -22,7 +21,7 @@ func Init(r *gin.Engine) {
 			user.POST("/register/", controller.Register)
 			user.POST("/login/", controller.LoginHandler)
 		}
-		douyin.Use(middleware.JwtToken())
+		// douyin.Use(middleware.JwtToken())
 		douyin.GET("/osstest", controller.GetURL) //临时测试地址
 		//douyin.GET("/feed", controller.VideoListHandler)
 		publish := douyin.Group("/publish")

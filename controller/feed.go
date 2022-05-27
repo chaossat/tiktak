@@ -2,7 +2,6 @@ package controller
 
 import (
 	"context"
-	"fmt"
 	"log"
 	"net/http"
 	"strconv"
@@ -14,7 +13,6 @@ import (
 )
 
 func Feed(ctx *gin.Context) {
-	fmt.Println("11111111111111111111111111111111111111")
 	latest_time := ctx.Query("latest_time")
 	latesttime, err := strconv.ParseInt(latest_time, 10, 64)
 	if err != nil {
@@ -56,9 +54,6 @@ func Feed(ctx *gin.Context) {
 			"status_msg":  "调用远程服务错误",
 		})
 		return
-	}
-	for _, j := range resp.VideoList {
-		fmt.Println(j.PlayUrl)
 	}
 	ctx.JSON(http.StatusOK, resp)
 }
