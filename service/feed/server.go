@@ -6,7 +6,7 @@ import (
 	"net"
 	"os"
 	"time"
-	"github.com/chaossat/tiktak/middleware"
+
 	"github.com/chaossat/tiktak/oss"
 	"github.com/chaossat/tiktak/service/feed/model"
 	"github.com/chaossat/tiktak/service/feed/pb"
@@ -19,7 +19,7 @@ type Feed struct {
 
 //本次返回的视频中发布最早的时间，作为下次请求时的latest_time
 func GetNextTime(videos []model.Video) int64 {
-	if len(videos)==0{
+	if len(videos) == 0 {
 		return time.Now().Unix()
 	}
 	ans := videos[0].UpdateTime
@@ -79,21 +79,21 @@ func (this *Feed) GetFeed(ctx context.Context, req *pb.DouyinFeedRequest) (*pb.D
 	var statuscode int32
 	var statusmsg string
 	var userid int64
-	if len(*req.Token) > 0 {
-		claims, err := middleware.CheckToken(*req.Token)
-		if err != nil {
-			log.Println("解析用户token失败", err.Error())
-			statuscode = 1
-			statusmsg = "解析用户token失败"
-			return &pb.DouyinFeedResponse{
-				StatusCode: &statuscode,
-				StatusMsg:  &statusmsg,
-			}, nil
-		}
-		userid = claims.UserID
-	} else {
-		userid = 0
-	}
+	// if len(*req.Token) > 0 {
+	// 	claims, err := middleware.CheckToken(*req.Token)
+	// 	if err != nil {
+	// 		log.Println("解析用户token失败", err.Error())
+	// 		statuscode = 1
+	// 		statusmsg = "解析用户token失败"
+	// 		return &pb.DouyinFeedResponse{
+	// 			StatusCode: &statuscode,
+	// 			StatusMsg:  &statusmsg,
+	// 		}, nil
+	// 	}
+	// 	userid = claims.UserID
+	// } else {
+	// 	userid = 0
+	// }
 
 	video_list, err := model.GetVideoList(*req.LatestTime)
 	if err != nil {
@@ -111,18 +111,20 @@ func (this *Feed) GetFeed(ctx context.Context, req *pb.DouyinFeedRequest) (*pb.D
 		Author := GetAuthor(userid, video.AuthorID)
 		PlayUrl := oss.GetURL(video.PlayLocation)
 		CoverUrl := oss.GetURL(video.Cover_location)
-		favoritecnt, err := model.GetFavoriteCount(Id)
-		if err != nil {
-			log.Println("获取视频的点赞个数错误", err.Error())
-			statuscode = 1
-			statusmsg = "获取视频点赞失败"
-			return &pb.DouyinFeedResponse{
-				StatusCode: &statuscode,
-				StatusMsg:  &statusmsg,
-			}, nil
-		}
+		favoritecnt := int64(0)
+		// favoritecnt, err := model.GetFavoriteCount(Id)
+		// if err != nil {
+		// 	log.Println("获取视频的点赞个数错误", err.Error())
+		// 	statuscode = 1
+		// 	statusmsg = "获取视频点赞失败"
+		// 	return &pb.DouyinFeedResponse{
+		// 		StatusCode: &statuscode,
+		// 		StatusMsg:  &statusmsg,
+		// 	}, nil
+		// }
 		FavoriteCount := favoritecnt
-		commentcnt := model.GetCommentCount(video)
+		commentcnt := int64(0)
+		// commentcnt := model.GetCommentCount(video)
 		CommentCount := commentcnt
 		var isfavorite bool
 		if userid != 0 {

@@ -1,6 +1,7 @@
 syntax = "proto2";
-package douyin.core;
+package douyin.core.userinf;
 option go_package="../;pb";
+
 message douyin_user_request {
   //用户id
   required int64 user_id = 1;

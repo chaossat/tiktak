@@ -1,5 +1,5 @@
 syntax = "proto2";
-package douyin.core;
+package douyin.core.publist;
 option go_package="../pb";
 service publish{
   rpc publish_video(douyin_publish_list_request)returns(douyin_publish_list_response){}
@@ -31,7 +31,10 @@ message Video {
   required int64 comment_count = 6;
   //true-已点赞，faLse-未点赞
   required bool is_favorite = 7;
+  //视频标题
+  required string title=8;
 }
+
 message User {
   //用户id
   required int64 id = 1;
