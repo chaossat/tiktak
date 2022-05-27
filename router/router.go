@@ -21,13 +21,16 @@ func Init(r *gin.Engine) {
 			user.POST("/register/", controller.Register)
 			user.POST("/login/", controller.LoginHandler)
 		}
-		// douyin.Use(middleware.JwtToken())
 		douyin.GET("/osstest", controller.GetURL) //临时测试地址
 		//douyin.GET("/feed", controller.VideoListHandler)
 		publish := douyin.Group("/publish")
 		{
 			publish.POST("/action/", controller.UploadHandler)
 			publish.GET("/list", controller.PubListHandler)
+		}
+		favorite := douyin.Group("/favorite")
+		{
+			favorite.GET("/list/", controller.FavoriteList)
 		}
 	}
 }
