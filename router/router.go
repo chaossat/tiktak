@@ -32,5 +32,10 @@ func Init(r *gin.Engine) {
 		{
 			favorite.GET("/list/", controller.FavoriteList)
 		}
+		relation := douyin.Group("/relation")
+		{
+			relation.GET("/follower/list", controller.Followerlist)
+		}
+
 	}
 }

@@ -30,6 +30,18 @@ func FollowerCountByID(uid int) (int64, error) {
 	return int64(cnt), nil
 }
 
+//根据用户的id获取关注者的列表
+func FollowerListByID(uid int) (userlist []*model.User, err error) {
+	user := &model.User{}
+	common.GetDB().Where("id = ?", uid).First(user)
+	if user.ID == 0 {
+		return nil, errors.New("no such user")
+	}
+	users := []*model.User{}
+	err = common.GetDB().Model(user).Association("Followers").Find(&users).Error
+	return users, err
+}
+
 //判断是否已关注作者
 func IsFollow(user, author model.User) (bool, error) {
 	//var user, author User
