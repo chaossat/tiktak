@@ -60,8 +60,7 @@ func GetAuthor(userid, authorid int64) pb.User {
 	} else {
 		isfollow, err = model.IsFollow(user, author)
 		if err != nil {
-			log.Println("查询是否关注错误")
-			return pbauthor
+			isfollow = false
 		}
 	}
 	IsFollow := isfollow

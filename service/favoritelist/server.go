@@ -45,8 +45,7 @@ func GetAuthor(userid, authorid int64) pb.User {
 	} else {
 		isfollow, err = model.IsFollow(user, author)
 		if err != nil {
-			log.Println("查询是否关注错误")
-			return pbauthor
+			isfollow = false
 		}
 	}
 	IsFollow := isfollow
@@ -63,8 +62,9 @@ func GetAuthor(userid, authorid int64) pb.User {
 func (this *FavoriteList) GetFavoriteList(ctx context.Context, req *pb.DouyinFavoriteListRequest) (*pb.DouyinFavoriteListResponse, error) {
 	var statuscode int32
 	var statusmsg string
-	video_list, err := model.FavoriteList(*req.UserId)
-	userid := *req.UserId
+	user_id := *req.UserId
+	video_list, err := model.FavoriteList(user_id)
+	var curid int64
 	if len(*req.Token) > 0 {
 		claims, err := middleware.CheckToken(*req.Token)
 		if err != nil {
@@ -76,10 +76,16 @@ func (this *FavoriteList) GetFavoriteList(ctx context.Context, req *pb.DouyinFav
 				StatusMsg:  &statusmsg,
 			}, nil
 		}
-		userid = claims.UserID
-	} else {
-		userid = 0
+		curid = claims.UserID
 	}
+	//else {
+	//	statuscode = 1
+	//	statusmsg = "用户未登录"
+	//	return &pb.DouyinFavoriteListResponse{
+	//		StatusCode: &statuscode,
+	//		StatusMsg:  &statusmsg,
+	//	}, nil
+	//}
 	if err != nil {
 		statuscode = 1
 		statusmsg = "获取点赞过的视频列表失败"
@@ -93,7 +99,7 @@ func (this *FavoriteList) GetFavoriteList(ctx context.Context, req *pb.DouyinFav
 	for _, video := range video_list {
 		Id := video.ID
 		Title := video.Title
-		Author := GetAuthor(userid, video.AuthorID)
+		Author := GetAuthor(curid, video.AuthorID)
 		PlayUrl := oss.GetURL(video.PlayLocation)
 		CoverUrl := oss.GetURL(video.Cover_location)
 		favoritecnt, err := model.GetFavoriteCount(Id)
@@ -110,8 +116,8 @@ func (this *FavoriteList) GetFavoriteList(ctx context.Context, req *pb.DouyinFav
 		commentcnt := model.GetCommentCount(video)
 		CommentCount := commentcnt
 		var isfavorite bool
-		if userid != 0 {
-			isfavorite, err = model.IsFavorite(userid, video.ID)
+		if curid != 0 {
+			isfavorite, err = model.IsFavorite(curid, video.ID)
 			if err != nil {
 				log.Println("判断用户是否点赞当前视频错误")
 				statuscode = 1
