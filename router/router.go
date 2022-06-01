@@ -35,7 +35,9 @@ func Init(r *gin.Engine) {
 		}
 		relation := douyin.Group("/relation")
 		{
-			relation.GET("/follower/list", controller.Followerlist)
+			relation.GET("/follower/list/", controller.Followerlist)
+			relation.GET("/follow/list/", controller.FollowListHandler)
+			relation.POST("/action/", controller.FollowActionHandler)
 		}
 
 	}
