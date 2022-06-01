@@ -1,4 +1,4 @@
-package followlist
+package main
 
 import (
 	"context"
@@ -88,7 +88,8 @@ func (followlist Followlist) GetFollowlist(ctx context.Context, request *pb.Douy
 			}
 			return &response, err
 		}
-		isfollowdudu, err := db.IsFollow(userinf, *follows[i])
+		isfollowdudu := db.IsFollow(userinf, *follows[i])
+
 		follows_ans[i] = &pb.User{
 			Id:            &follows[i].ID,
 			Name:          &follows[i].Username,

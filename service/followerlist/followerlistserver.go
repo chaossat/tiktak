@@ -3,15 +3,16 @@ package main
 import (
 	"context"
 	"fmt"
+	"log"
+	"net"
+	"os"
+
 	"github.com/chaossat/tiktak/common"
 	"github.com/chaossat/tiktak/db"
 	"github.com/chaossat/tiktak/middleware"
 	"github.com/chaossat/tiktak/service/followerlist/pb"
 	"github.com/spf13/viper"
 	"google.golang.org/grpc"
-	"log"
-	"net"
-	"os"
 )
 
 type Followerlist struct {
@@ -35,7 +36,7 @@ func (followerlist Followerlist) GetFollowerlist(ctx context.Context, request *p
 
 	if err != nil {
 		var code int32 = -2
-		var msg string = "查询用户信息失败！"
+		var msg string = "查询用户信息失败!"
 		response := pb.DouyinRelationFollowerListResponse{
 			StatusCode: &code,
 			StatusMsg:  &msg,
@@ -46,7 +47,7 @@ func (followerlist Followerlist) GetFollowerlist(ctx context.Context, request *p
 
 	if userinf.ID == 0 {
 		var code int32 = -3
-		var msg string = "对应id的用户不存在！"
+		var msg string = "对应id的用户不存在!"
 		response := pb.DouyinRelationFollowerListResponse{
 			StatusCode: &code,
 			StatusMsg:  &msg,
@@ -57,7 +58,7 @@ func (followerlist Followerlist) GetFollowerlist(ctx context.Context, request *p
 	followers, err := db.FollowerListByID(int(*request.UserId))
 	if err != nil {
 		var code int32 = -4
-		var msg string = "查询用户粉丝失败！"
+		var msg string = "查询用户粉丝失败!"
 		response := pb.DouyinRelationFollowerListResponse{
 			StatusCode: &code,
 			StatusMsg:  &msg,
@@ -70,8 +71,10 @@ func (followerlist Followerlist) GetFollowerlist(ctx context.Context, request *p
 	for i := 0; i < len(followers); i++ {
 		followerCount, err := db.FollowerCountByID(int(followers[i].ID))
 		if err != nil {
+
 			var code int32 = -5
 			var msg string = "查询粉丝数量失败！"
+
 			return &pb.DouyinRelationFollowerListResponse{
 				StatusCode: &code,
 				StatusMsg:  &msg,
@@ -81,14 +84,14 @@ func (followerlist Followerlist) GetFollowerlist(ctx context.Context, request *p
 		followCount, err := db.FollowCountByID(int(followers[i].ID))
 		if err != nil {
 			var code int32 = -6
-			var msg string = "查询关注数量失败！"
+			var msg string = "查询关注数量失败!"
 			return &pb.DouyinRelationFollowerListResponse{
 				StatusCode: &code,
 				StatusMsg:  &msg,
 				UserList:   nil,
 			}, nil
 		}
-		isfollowdudu, err := db.IsFollow(userinf, *followers[i])
+		isfollowdudu := db.IsFollow(userinf, *followers[i])
 		followers_ans[i] = &pb.User{
 			Id:            &followers[i].ID,
 			Name:          &followers[i].Username,
@@ -98,7 +101,7 @@ func (followerlist Followerlist) GetFollowerlist(ctx context.Context, request *p
 		}
 	}
 	var code int32 = 0
-	var msg string = "验证成功！"
+	var msg string = "验证成功!"
 	response := &pb.DouyinRelationFollowerListResponse{
 		StatusCode: &code,
 		StatusMsg:  &msg,

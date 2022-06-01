@@ -20,7 +20,6 @@ func TestIsFollow(t *testing.T) {
 	user2 := model.User{
 		ID: 2,
 	}
-	res, err := IsFollow(user1, user2)
-	fmt.Println("错误信息：", err)
+	res := IsFollow(user1, user2)
 	fmt.Println("查询结果：", res)
 }
