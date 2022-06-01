@@ -19,6 +19,18 @@ func FollowCountByID(uid int) (int64, error) {
 	return int64(cnt), nil
 }
 
+//根据用户的id 爱豆的列表
+func FollowListByID(uid int) (userlist []*model.User, err error) {
+	user := &model.User{}
+	common.GetDB().Where("id = ?", uid).First(user)
+	if user.ID == 0 {
+		return nil, errors.New("no such user")
+	}
+	users := []*model.User{}
+	err = common.GetDB().Model(user).Association("Follows").Find(&users).Error
+	return users, err
+}
+
 //FollowerCountByID:根据用户id获取关注者的数量
 func FollowerCountByID(uid int) (int64, error) {
 	user := &model.User{}
@@ -55,16 +67,16 @@ func FollowListByID(uid int) (userlist []*model.User, err error) {
 }
 
 //判断是否已关注作者
-func IsFollow(user, author model.User) (bool, error) {
-	//var user, author User
-	//Db.Where("id = ?", userid).First(&user)
-	//Db.Where("id = ?", authorid).First(&author)
+func IsFollow(user, author model.User) bool {
 	err := common.GetDB().Model(&user).Association("Follows").Find(&author).Error
 	if err != nil {
+		if err.Error() == "record not found" {
+			return false
+		}
 		fmt.Println("查询是否已关注错误", err)
-		return false, err
+		return false
 	}
-	return true, nil
+	return true
 }
 
 //关注

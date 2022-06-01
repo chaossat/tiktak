@@ -39,6 +39,10 @@ func Init(r *gin.Engine) {
 			relation.GET("/follow/list/", controller.FollowListHandler)
 			relation.POST("/action/", controller.FollowActionHandler)
 		}
-
+		comment := douyin.Group("/comment")
+		{
+			comment.POST("/action/", controller.CommentActionHandler)
+			comment.GET("/list/", controller.CommentListHandler)
+		}
 	}
 }

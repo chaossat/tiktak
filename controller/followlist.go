@@ -6,6 +6,7 @@ import (
 	"net/http"
 
 	"github.com/chaossat/tiktak/middleware"
+
 	"github.com/chaossat/tiktak/service/followlist/pb"
 	"github.com/gin-gonic/gin"
 	"google.golang.org/grpc"
