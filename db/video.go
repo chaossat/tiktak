@@ -46,3 +46,13 @@ func VideoCountByID(uid int) (int, error) {
 	cnt := common.GetDB().Model(user).Association("Videos").Count()
 	return cnt, nil
 }
+
+//IsVideoExist查询对应id的视频是否存在
+func IsVideoExist(vid int) (bool, error) {
+	p := 0
+	err := common.GetDB().Model(&model.Video{}).Where("id = ?", vid).Count(&p).Error
+	if err != nil {
+		return false, err
+	}
+	return p == 1, nil
+}
