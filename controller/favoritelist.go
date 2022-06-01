@@ -47,7 +47,7 @@ func FavoriteList(ctx *gin.Context) {
 	log.Println("resp:", resp)
 	if err != nil {
 		log.Println(err.Error())
-		log.Println("调用远程服务错误")
+		log.Println("点赞过的视频调用远程服务错误")
 		ctx.JSON(200, gin.H{
 			"status_code": 1,
 			"status_msg":  "调用远程服务错误",

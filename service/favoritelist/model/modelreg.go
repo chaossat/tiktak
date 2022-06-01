@@ -118,7 +118,7 @@ func IsFollow(user, author User) (bool, error) {
 	//Db.Where("id = ?", authorid).First(&author)
 	err := Db.Model(&user).Association("Follows").Find(&author).Error
 	if err != nil {
-		log.Println("查询是否已关注错误")
+		log.Println("查询是否已关注错误", err)
 		return false, err
 	}
 	return true, nil
