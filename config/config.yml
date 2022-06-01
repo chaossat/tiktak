@@ -1,0 +1,24 @@
+datasource:
+  mysql:
+    host: 123.57.194.129
+    port: 3306
+    database: chaossat
+    username: root
+    password: woshizhu
+    charset: utf8
+  redis:
+    host: 192.168.163.191
+    port: 6379
+    password:
+    DB: 0
+  #阿里云oss配置
+  oss:
+    OSSBucket: tiktak
+    OSSEndpoint: oss-cn-beijing.aliyuncs.com
+    #oss 访问key
+    OSSAccesskeyID: LTAI5tHiwc6H69iKRLtMymm6
+    #oss key密钥
+    OSSAccesskeySecret: iXRkQirvI8CsLu7pepu77qppqdSOYc
+server:
+  port: :80
+

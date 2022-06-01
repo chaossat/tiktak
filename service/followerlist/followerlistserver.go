@@ -73,7 +73,7 @@ func (followerlist Followerlist) GetFollowerlist(ctx context.Context, request *p
 	for i := 0; i < len(followers); i++ {
 		followerCount, err := db.FollowerCountByID(int(followers[i].ID))
 		if err != nil {
-			var code int32 = -6
+			var code int32 = -5
 			var msg string = "查询粉丝数量失败！"
 			return &pb.DouyinRelationFollowerListResponse{
 				StatusCode: &code,
