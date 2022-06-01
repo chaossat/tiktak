@@ -14,10 +14,6 @@ import (
 	"os"
 )
 
-var errorID = int64(0)
-var errorName = "Null"
-var errorFollow = false
-
 type Followerlist struct {
 	pb.UnimplementedFollowerlistServer
 }
@@ -70,6 +66,7 @@ func (followerlist Followerlist) GetFollowerlist(ctx context.Context, request *p
 		return &response, nil
 	}
 	var followers_ans = make([]*pb.User, len(followers))
+
 	for i := 0; i < len(followers); i++ {
 		followerCount, err := db.FollowerCountByID(int(followers[i].ID))
 		if err != nil {

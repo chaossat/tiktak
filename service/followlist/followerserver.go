@@ -3,10 +3,14 @@ package followlist
 import (
 	"context"
 	"fmt"
+	"github.com/chaossat/tiktak/common"
 	"github.com/chaossat/tiktak/db"
 	"github.com/chaossat/tiktak/middleware"
 	"github.com/chaossat/tiktak/service/followlist/pb"
 	"github.com/spf13/viper"
+	"google.golang.org/grpc"
+	"log"
+	"net"
 	"os"
 )
 
@@ -48,12 +52,79 @@ func (followlist Followlist) GetFollowlist(ctx context.Context, request *pb.Douy
 		}
 		return &response, nil
 	}
-	
-	//make([]*pb.User,len(followlist))
+	follows, err := db.FollowListByID(int(*request.UserId))
+	if err != nil {
+		var code int32 = -4
+		var msg string = "查询用户的关注失败"
+		response := pb.DouyinRelationFollowListResponse{
+			StatusCode: &code,
+			StatusMsg:  &msg,
+			UserList:   nil,
+		}
+		return &response, err
+	}
+
+	var follows_ans = make([]*pb.User, len(follows))
+	for i := 0; i < len(follows_ans); i++ {
+		followCount, err := db.FollowCountByID(int(follows[i].ID))
+		if err != nil {
+			var code int32 = -5
+			var msg string = "查询用户的关注数失败"
+			response := pb.DouyinRelationFollowListResponse{
+				StatusCode: &code,
+				StatusMsg:  &msg,
+				UserList:   nil,
+			}
+			return &response, err
+		}
+		followerCount, err := db.FollowerCountByID(int(follows[i].ID))
+		if err != nil {
+			var code int32 = -6
+			var msg string = "查询用的粉丝数失败"
+			response := pb.DouyinRelationFollowListResponse{
+				StatusCode: &code,
+				StatusMsg:  &msg,
+				UserList:   nil,
+			}
+			return &response, err
+		}
+		isfollowdudu, err := db.IsFollow(userinf, *follows[i])
+		follows_ans[i] = &pb.User{
+			Id:            &follows[i].ID,
+			Name:          &follows[i].Username,
+			FollowCount:   &followCount,
+			FollowerCount: &followerCount,
+			IsFollow:      &isfollowdudu,
+		}
+	}
+	var code int32 = 0
+	var msg string = "验证成功！"
+	response := &pb.DouyinRelationFollowListResponse{
+		StatusCode: &code,
+		StatusMsg:  &msg,
+		UserList:   follows_ans,
+	}
+	return response, nil
+
 }
 
 func main() {
+	InitConfig()
+	common.InitDB()
+	//初始化grpc实例
+	grpcserver := grpc.NewServer()
+	//注册服务
+	pb.RegisterFollowlistServer(grpcserver, new(Followlist))
+	//设置监听
+	listen, err := net.Listen("tcp", ":17801")
 
+	if err != nil {
+		log.Println("注册服务启动监听失败")
+	}
+	defer listen.Close()
+
+	//启动服务
+	grpcserver.Serve(listen)
 }
 
 func InitConfig() {
