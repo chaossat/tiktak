@@ -110,20 +110,20 @@ func (this *Feed) GetFeed(ctx context.Context, req *pb.DouyinFeedRequest) (*pb.D
 		Author := GetAuthor(userid, video.AuthorID)
 		PlayUrl := oss.GetURL(video.Location)
 		CoverUrl := oss.GetURL(video.Cover_location)
-		favoritecnt := int64(0)
-		// favoritecnt, err := model.GetFavoriteCount(Id)
-		// if err != nil {
-		// 	log.Println("获取视频的点赞个数错误", err.Error())
-		// 	statuscode = 1
-		// 	statusmsg = "获取视频点赞失败"
-		// 	return &pb.DouyinFeedResponse{
-		// 		StatusCode: &statuscode,
-		// 		StatusMsg:  &statusmsg,
-		// 	}, nil
-		// }
+		//favoritecnt := int64(0)
+		favoritecnt, err := model.GetFavoriteCount(Id)
+		if err != nil {
+			log.Println("获取视频的点赞个数错误", err.Error())
+			statuscode = 1
+			statusmsg = "获取视频点赞失败"
+			return &pb.DouyinFeedResponse{
+				StatusCode: &statuscode,
+				StatusMsg:  &statusmsg,
+			}, nil
+		}
 		FavoriteCount := favoritecnt
-		commentcnt := int64(0)
-		// commentcnt := model.GetCommentCount(video)
+		//commentcnt := int64(0)
+		commentcnt := model.GetCommentCount(video)
 		CommentCount := commentcnt
 		var isfavorite bool
 		if userid != 0 {

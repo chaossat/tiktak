@@ -54,7 +54,7 @@ func CancelLike(userid int64, videoid int64) (bool, error) {
 	Db.Where("id = ?", videoid).First(&video)
 	err = Db.Model(&user).
 		Association("FavoriteVideos").
-		Append(&video).Error
+		Delete(&video).Error
 	if err != nil {
 		return false, err
 	}
