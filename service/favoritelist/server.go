@@ -2,15 +2,16 @@ package main
 
 import (
 	"context"
+	"log"
+	"net"
+	"os"
+
 	"github.com/chaossat/tiktak/middleware"
 	"github.com/chaossat/tiktak/oss"
 	"github.com/chaossat/tiktak/service/favoritelist/model"
 	"github.com/chaossat/tiktak/service/favoritelist/pb"
 	"github.com/spf13/viper"
 	"google.golang.org/grpc"
-	"log"
-	"net"
-	"os"
 )
 
 type FavoriteList struct {
@@ -165,6 +166,7 @@ func InitConfig() {
 }
 
 func main() {
+	log.Println("正在启动FavoriteList服务......")
 	InitConfig()
 	model.InitDB()
 	model.InitRedis()

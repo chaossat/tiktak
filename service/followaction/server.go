@@ -85,6 +85,7 @@ func (f *FollowAction) FollowAction(ctx context.Context, req *pb.DouyinRelationA
 }
 
 func main() {
+	log.Println("正在启动FollowAction服务......")
 	InitConfig()
 	common.InitDB()
 	common.InitRedis()

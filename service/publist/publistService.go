@@ -128,6 +128,7 @@ func (this *PublistServer) PublishVideo(ctx context.Context, req *pb.DouyinPubli
 }
 
 func main() {
+	log.Println("正在启动Publist服务......")
 	InitConfig()
 	common.InitDB()
 	//初始化grpc实例

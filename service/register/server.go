@@ -88,6 +88,7 @@ func InitConfig() {
 }
 
 func main() {
+	log.Println("正在启动Register服务......")
 	InitConfig()
 	model.InitDB()
 	//初始化grpc实例

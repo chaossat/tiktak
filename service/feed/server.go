@@ -177,6 +177,7 @@ func InitConfig() {
 }
 
 func main() {
+	log.Println("正在启动Feed服务......")
 	InitConfig()
 	model.InitDB()
 	model.InitRedis()

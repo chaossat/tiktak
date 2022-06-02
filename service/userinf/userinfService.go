@@ -98,6 +98,7 @@ func (this *UserInf) GetUserinf(context context.Context, request *pb.DouyinUserR
 }
 
 func main() {
+	log.Println("正在启动Userinf服务......")
 	InitConfig()
 	common.InitDB()
 	//初始化grpc实例

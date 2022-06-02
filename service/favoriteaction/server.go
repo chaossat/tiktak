@@ -2,14 +2,15 @@ package main
 
 import (
 	"context"
+	"log"
+	"net"
+	"os"
+
 	"github.com/chaossat/tiktak/middleware"
 	"github.com/chaossat/tiktak/service/favoriteaction/model"
 	"github.com/chaossat/tiktak/service/favoriteaction/pb"
 	"github.com/spf13/viper"
 	"google.golang.org/grpc"
-	"log"
-	"net"
-	"os"
 )
 
 type FavoriteAction struct {
@@ -79,6 +80,7 @@ func InitConfig() {
 }
 
 func main() {
+	log.Println("正在启动FavoriteAction服务......")
 	InitConfig()
 	model.InitDB()
 	model.InitRedis()

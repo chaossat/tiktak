@@ -103,6 +103,7 @@ func (f *FollowList) GetFollowList(ctx context.Context, req *pb.DouyinRelationFo
 	}, nil
 }
 func main() {
+	log.Println("正在启动FollowList服务......")
 	InitConfig()
 	common.InitDB()
 	common.InitRedis()

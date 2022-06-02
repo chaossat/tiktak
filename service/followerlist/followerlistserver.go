@@ -111,6 +111,7 @@ func (followerlist Followerlist) GetFollowerlist(ctx context.Context, request *p
 }
 
 func main() {
+	log.Println("正在启动FollowerList服务......")
 	InitConfig()
 	common.InitDB()
 	//初始化grpc实例
