@@ -19,18 +19,6 @@ func FollowCountByID(uid int) (int64, error) {
 	return int64(cnt), nil
 }
 
-//根据用户的id 爱豆的列表
-func FollowListByID(uid int) (userlist []*model.User, err error) {
-	user := &model.User{}
-	common.GetDB().Where("id = ?", uid).First(user)
-	if user.ID == 0 {
-		return nil, errors.New("no such user")
-	}
-	users := []*model.User{}
-	err = common.GetDB().Model(user).Association("Follows").Find(&users).Error
-	return users, err
-}
-
 //FollowerCountByID:根据用户id获取关注者的数量
 func FollowerCountByID(uid int) (int64, error) {
 	user := &model.User{}

@@ -10,3 +10,4 @@ go run service/login/loginServer.go & \
 go run service/publist/publistService.go & \
 go run service/register/server.go & \
 go run service/userinf/userinfService.go & \
+echo "ok"

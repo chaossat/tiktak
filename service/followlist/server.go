@@ -84,7 +84,7 @@ func (f *FollowList) GetFollowList(ctx context.Context, req *pb.DouyinRelationFo
 			}, err
 		}
 
-		isfollowdudu, _ := db.IsFollow(userinf, *follows[i])
+		isfollowdudu := db.IsFollow(userinf, *follows[i])
 
 		follows_ans[i] = &pb.User{
 			Id:            &follows[i].ID,
