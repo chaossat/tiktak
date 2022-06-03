@@ -102,7 +102,7 @@ func (this *FavoriteList) GetFavoriteList(ctx context.Context, req *pb.DouyinFav
 		Id := video.ID
 		Title := video.Title
 		Author := GetAuthor(curid, video.AuthorID)
-		PlayUrl := oss.GetURL(video.PlayLocation)
+		PlayUrl := oss.GetURL(video.Location)
 		CoverUrl := oss.GetURL(video.Cover_location)
 		favoritecnt, err := model.GetFavoriteCount(Id)
 		if err != nil {

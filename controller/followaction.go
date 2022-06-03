@@ -63,4 +63,5 @@ func FollowActionHandler(ctx *gin.Context) {
 		})
 		return
 	}
+	ctx.JSON(200, resp)
 }
