@@ -7,11 +7,8 @@ import (
 	"os"
 	"time"
 
-<<<<<<< HEAD
-	"github.com/chaossat/tiktak/middleware"
-=======
 	_ "github.com/CodyGuo/godaemon"
->>>>>>> 46fcc90dafeddaf76f31101532e65a18c5f457a3
+	"github.com/chaossat/tiktak/middleware"
 	"github.com/chaossat/tiktak/oss"
 	"github.com/chaossat/tiktak/service/feed/model"
 	"github.com/chaossat/tiktak/service/feed/pb"
