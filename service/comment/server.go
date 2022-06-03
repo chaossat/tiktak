@@ -8,6 +8,7 @@ import (
 	"os"
 	"time"
 
+	_ "github.com/CodyGuo/godaemon"
 	"github.com/chaossat/tiktak/common"
 	"github.com/chaossat/tiktak/db"
 	"github.com/chaossat/tiktak/middleware"
