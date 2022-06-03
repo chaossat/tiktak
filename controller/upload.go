@@ -71,6 +71,12 @@ func UploadHandler(ctx *gin.Context) {
 	}
 	//为视频生成封面
 	util.CoverGenerator(tempLocation[2:], sha1+".jpg")
+	cover, err := os.Open("./tempimage/" + sha1 + ".jpg")
+	if err != nil {
+		fmt.Printf("Failed to open cover file,maybe the video type is wrong, err:%s\n", err.Error())
+		UploadResponse(ctx, -8, "Error Occoured! Maybe File Type Is Wrong")
+		return
+	}
 	//将视频信息存入数据库
 	videoMeta := model.Video{
 		Title:          title,
@@ -82,7 +88,7 @@ func UploadHandler(ctx *gin.Context) {
 	err = db.VideoUpload(&videoMeta)
 	if err != nil {
 		fmt.Printf("Failed to update mysql, err:%s\n", err.Error())
-		UploadResponse(ctx, -8, "Error Occoured!")
+		UploadResponse(ctx, -9, "Error Occoured!")
 		return
 	}
 
@@ -94,11 +100,6 @@ func UploadHandler(ctx *gin.Context) {
 	ossImagePath := "images/" + sha1 + ".jpg"
 	videoMeta.Location = ossPath
 	videoMeta.Cover_location = ossImagePath
-	cover, err := os.Open("./tempimage/" + sha1 + ".jpg")
-	if err != nil {
-		fmt.Printf("Failed to open cover file, err:%s\n", err.Error())
-		return
-	}
 	videoOBJ := &oss.VideoOBJ{
 		File:      newFile,
 		Cover:     cover,
