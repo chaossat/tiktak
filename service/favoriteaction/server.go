@@ -6,6 +6,7 @@ import (
 	"net"
 	"os"
 
+	_ "github.com/CodyGuo/godaemon"
 	"github.com/chaossat/tiktak/middleware"
 	"github.com/chaossat/tiktak/service/favoriteaction/model"
 	"github.com/chaossat/tiktak/service/favoriteaction/pb"

@@ -3,6 +3,7 @@ module github.com/chaossat/tiktak
 go 1.16
 
 require (
+	github.com/CodyGuo/godaemon v0.0.0-20200413142854-c36b39fdd071
 	github.com/aliyun/aliyun-oss-go-sdk v2.2.2+incompatible
 	github.com/baiyubin/aliyun-sts-go-sdk v0.0.0-20180326062324-cfa1a18b161f // indirect
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible

@@ -3,6 +3,7 @@ package main
 import (
 	"os"
 
+	_ "github.com/CodyGuo/godaemon"
 	"github.com/chaossat/tiktak/common"
 	"github.com/chaossat/tiktak/oss"
 	"github.com/chaossat/tiktak/router"

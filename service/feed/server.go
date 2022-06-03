@@ -7,6 +7,7 @@ import (
 	"os"
 	"time"
 
+	_ "github.com/CodyGuo/godaemon"
 	"github.com/chaossat/tiktak/oss"
 	"github.com/chaossat/tiktak/service/feed/model"
 	"github.com/chaossat/tiktak/service/feed/pb"
