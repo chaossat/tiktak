@@ -30,7 +30,7 @@ func FollowerCountByID(uid int) (int64, error) {
 	return int64(cnt), nil
 }
 
-//根据用户的id获取关注者的列表
+//根据用户的id获取粉丝的列表
 func FollowerListByID(uid int) (userlist []*model.User, err error) {
 	user := &model.User{}
 	common.GetDB().Where("id = ?", uid).First(user)

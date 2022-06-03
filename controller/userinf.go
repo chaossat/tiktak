@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"strconv"
 
+	"github.com/chaossat/tiktak/db"
 	"github.com/chaossat/tiktak/service/userinf/pb"
 	"github.com/gin-gonic/gin"
 	"google.golang.org/grpc"
@@ -48,7 +49,31 @@ func UserInfHandler(ctx *gin.Context) {
 		UserinfoResponse(ctx, -3, resp.GetStatusMsg(), pb.User{})
 		return
 	}
-	UserinfoResponse(ctx, resp.GetStatusCode(), resp.GetStatusMsg(), *resp.GetUser())
+	// videoCount, err := db.VideoCountByID(user_id)
+	// if err != nil {
+	// 	fmt.Println("获取视频数失败")
+	// 	UserinfoResponse(ctx, -4, "Error Occoured!", pb.User{})
+	// 	return
+	// }
+	favoriteCount, err := db.FavoriteCountByID(user_id)
+	if err != nil {
+		fmt.Println("获取点赞数失败")
+		UserinfoResponse(ctx, -5, "Error Occoured!", pb.User{})
+		return
+	}
+	type dtoUser struct {
+		pb.User
+		Favorite_count int64 `json:"favorite_count"`
+	}
+	dtouser := dtoUser{
+		*resp.GetUser(),
+		int64(favoriteCount),
+	}
+	ctx.JSON(200, gin.H{
+		"status_code": resp.GetStatusCode(),
+		"status_msg":  resp.GetStatusMsg(),
+		"user":        dtouser,
+	})
 }
 
 //UserinfoResponse:返回发布列表处理信息

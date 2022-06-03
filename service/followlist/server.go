@@ -52,7 +52,7 @@ func (f *FollowList) GetFollowList(ctx context.Context, req *pb.DouyinRelationFo
 	follows, err := db.FollowListByID(int(*req.UserId))
 	if err != nil {
 		statuscode = int32(-4)
-		statusmsg = "查询用户粉丝失败！"
+		statusmsg = "查询用户关注失败！"
 		response := pb.DouyinRelationFollowListResponse{
 			StatusCode: &statuscode,
 			StatusMsg:  &statusmsg,

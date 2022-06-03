@@ -7,6 +7,7 @@ import (
 	"os"
 	"time"
 
+	"github.com/chaossat/tiktak/middleware"
 	"github.com/chaossat/tiktak/oss"
 	"github.com/chaossat/tiktak/service/feed/model"
 	"github.com/chaossat/tiktak/service/feed/pb"
@@ -78,21 +79,21 @@ func (this *Feed) GetFeed(ctx context.Context, req *pb.DouyinFeedRequest) (*pb.D
 	var statuscode int32
 	var statusmsg string
 	var userid int64
-	// if len(*req.Token) > 0 {
-	// 	claims, err := middleware.CheckToken(*req.Token)
-	// 	if err != nil {
-	// 		log.Println("解析用户token失败", err.Error())
-	// 		statuscode = 1
-	// 		statusmsg = "解析用户token失败"
-	// 		return &pb.DouyinFeedResponse{
-	// 			StatusCode: &statuscode,
-	// 			StatusMsg:  &statusmsg,
-	// 		}, nil
-	// 	}
-	// 	userid = claims.UserID
-	// } else {
-	// 	userid = 0
-	// }
+	if len(*req.Token) > 0 {
+		claims, err := middleware.CheckToken(*req.Token)
+		if err != nil {
+			log.Println("解析用户token失败", err.Error())
+			statuscode = 1
+			statusmsg = "解析用户token失败"
+			return &pb.DouyinFeedResponse{
+				StatusCode: &statuscode,
+				StatusMsg:  &statusmsg,
+			}, nil
+		}
+		userid = claims.UserID
+	} else {
+		userid = 0
+	}
 
 	video_list, err := model.GetVideoList(*req.LatestTime)
 	if err != nil {

@@ -22,6 +22,14 @@ func (f *FollowAction) FollowAction(ctx context.Context, req *pb.DouyinRelationA
 	//定义返回值
 	var statuscode int32
 	var statusmsg string
+	if *req.ToUserId == *req.UserId {
+		statuscode = -1
+		statusmsg = "不能关注自己"
+		return &pb.DouyinRelationActionResponse{
+			StatusCode: &statuscode,
+			StatusMsg:  &statusmsg,
+		}, nil
+	}
 	//验证token , 错误代码1
 	token := *req.Token
 	_, err := middleware.CheckToken(token)
