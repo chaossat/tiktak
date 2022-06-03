@@ -107,10 +107,10 @@ func DelFollow(user, author model.User) error {
 		}
 	}
 	//再检查author有没有被user关注，修复
-	err = common.GetDB().Model(&user).Association("Followers").Find(&author).Error
+	err = common.GetDB().Model(&author).Association("Followers").Find(&user).Error
 	if err == nil {
 		//没有被关注过就添加关注
-		err = common.GetDB().Model(&user).Association("Followers").Delete(&author).Error
+		err = common.GetDB().Model(&author).Association("Followers").Delete(&user).Error
 		if err != nil {
 			fmt.Println("查询是否已关注错误", err)
 			return err
