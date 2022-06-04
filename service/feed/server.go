@@ -2,12 +2,15 @@ package main
 
 import (
 	"context"
+	"fmt"
 	"log"
 	"net"
 	"os"
 	"time"
 
 	_ "github.com/CodyGuo/godaemon"
+	"github.com/chaossat/tiktak/common"
+	"github.com/chaossat/tiktak/db"
 	"github.com/chaossat/tiktak/middleware"
 	"github.com/chaossat/tiktak/oss"
 	"github.com/chaossat/tiktak/service/feed/model"
@@ -26,7 +29,7 @@ func GetNextTime(videos []model.Video) int64 {
 	}
 	ans := videos[0].UpdateTime
 	for _, video := range videos {
-		if ans < video.UpdateTime {
+		if ans > video.UpdateTime {
 			ans = video.UpdateTime
 		}
 	}
@@ -80,6 +83,7 @@ func (this *Feed) GetFeed(ctx context.Context, req *pb.DouyinFeedRequest) (*pb.D
 	var statuscode int32
 	var statusmsg string
 	var userid int64
+	fmt.Println("LatestTime:", *req.LatestTime)
 	if len(*req.Token) > 0 {
 		claims, err := middleware.CheckToken(*req.Token)
 		if err != nil {
@@ -105,6 +109,7 @@ func (this *Feed) GetFeed(ctx context.Context, req *pb.DouyinFeedRequest) (*pb.D
 			StatusMsg:  &statusmsg,
 		}, nil
 	}
+	log.Println("获取到的视频数：", len(video_list))
 	var pbvideo_list []*pb.Video
 	for _, video := range video_list {
 		Id := video.ID
@@ -124,9 +129,18 @@ func (this *Feed) GetFeed(ctx context.Context, req *pb.DouyinFeedRequest) (*pb.D
 			}, nil
 		}
 		FavoriteCount := favoritecnt
-		//commentcnt := int64(0)
-		commentcnt := model.GetCommentCount(video)
-		CommentCount := commentcnt
+		// commentcnt := 0
+		commentcnt, err := db.CommentCountByVID(int(Id))
+		if err != nil {
+			log.Println("获取评论数错误：", err.Error())
+			statuscode = 1
+			statusmsg = "判断用户是否点赞当前视频错误"
+			return &pb.DouyinFeedResponse{
+				StatusCode: &statuscode,
+				StatusMsg:  &statusmsg,
+			}, nil
+		}
+		CommentCount := int64(commentcnt)
 		var isfavorite bool
 		if userid != 0 {
 			isfavorite, err = model.IsFavorite(userid, video.ID)
@@ -181,6 +195,7 @@ func InitConfig() {
 func main() {
 	log.Println("正在启动Feed服务......")
 	InitConfig()
+	common.InitDB()
 	model.InitDB()
 	model.InitRedis()
 	//初始化grpc实例

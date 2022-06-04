@@ -11,6 +11,7 @@ import (
 func Init(r *gin.Engine) {
 	r.StaticFS("tempfile", http.Dir("./tempfile"))   //设置静态资源
 	r.StaticFS("tempvideo", http.Dir("./tempvideo")) //设置静态资源
+	r.StaticFS("static", http.Dir("./static"))       //设置静态资源
 	//设置分组路由规则
 	douyin := r.Group("/douyin")
 	{

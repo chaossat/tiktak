@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"fmt"
 	"io"
+	"log"
 	"os"
 	"path"
 	"time"
@@ -18,6 +19,14 @@ import (
 
 //UploadHandler:处理视频上传请求
 func UploadHandler(ctx *gin.Context) {
+	//开启debug，观察性能瓶颈
+	debugid, ok := <-DebugChan
+	if ok {
+		now := time.Now()
+		log.Println("开始上传请求,操作ID:", debugid)
+		defer log.Println("结束上传请求,操作ID:", debugid, "操作耗时：", time.Since(now))
+	}
+
 	//根据token鉴权，并获取userID
 	token := ctx.PostForm("token")
 	title := ctx.PostForm("title")
@@ -37,6 +46,10 @@ func UploadHandler(ctx *gin.Context) {
 		return
 	}
 	defer file.Close()
+	if header.Size > 100<<20 {
+		UploadResponse(ctx, 1, "文件不能大于100Mb!")
+		return
+	}
 
 	//判断文件的后缀名，目前仅放行mp4文件
 	ext := path.Ext(header.Filename)
@@ -75,6 +88,8 @@ func UploadHandler(ctx *gin.Context) {
 	if err != nil {
 		fmt.Printf("Failed to open cover file,maybe the video type is wrong, err:%s\n", err.Error())
 		UploadResponse(ctx, -8, "Error Occoured! Maybe File Type Is Wrong")
+		newFile.Close()
+		os.Remove(tempLocation)
 		return
 	}
 	//将视频信息存入数据库

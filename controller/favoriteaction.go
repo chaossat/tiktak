@@ -2,17 +2,27 @@ package controller
 
 import (
 	"context"
+	"log"
+	"net/http"
+	"strconv"
+	"time"
+
 	"github.com/chaossat/tiktak/middleware"
 	"github.com/chaossat/tiktak/service/favoriteaction/pb"
 	"github.com/gin-gonic/gin"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
-	"log"
-	"net/http"
-	"strconv"
 )
 
 func FavoriteAction(ctx *gin.Context) {
+	//开启debug，观察性能瓶颈
+	debugid, ok := <-DebugChan
+	if ok {
+		now := time.Now()
+		log.Println("开始点赞操作请求,操作ID:", debugid)
+		defer log.Println("结束点赞操作请求,操作ID:", debugid, "操作耗时：", time.Since(now))
+	}
+
 	//userid := ctx.Query("user_id")
 	token := ctx.Query("token")
 	videoid := ctx.Query("video_id")
@@ -76,7 +86,7 @@ func FavoriteAction(ctx *gin.Context) {
 	req.VideoId = &video_id
 	req.ActionType = &action_type
 	resp, err := grpcClient.GetFavoriteAction(context.TODO(), &req)
-	log.Println("resp:", resp)
+	// log.Println("resp:", resp)
 	if err != nil {
 		log.Println(err.Error())
 		log.Println("调用远程服务错误")

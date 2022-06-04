@@ -4,6 +4,7 @@ import (
 	"context"
 	"log"
 	"net/http"
+	"time"
 
 	"github.com/chaossat/tiktak/middleware"
 
@@ -14,6 +15,14 @@ import (
 )
 
 func FollowListHandler(ctx *gin.Context) {
+	//开启debug，观察性能瓶颈
+	debugid, ok := <-DebugChan
+	if ok {
+		now := time.Now()
+		log.Println("开始关注列表请求,操作ID:", debugid)
+		defer log.Println("结束关注列表请求,操作ID:", debugid, "操作耗时：", time.Since(now))
+	}
+
 	//获得前端的请求
 	token := ctx.Query("token")
 	claims, err := middleware.CheckToken(token)
@@ -48,7 +57,7 @@ func FollowListHandler(ctx *gin.Context) {
 	req.UserId = &user_id
 	req.Token = &token
 	resp, err := grpcClient.GetFollowList(context.TODO(), &req)
-	log.Println("resp:", resp)
+	// log.Println("resp:", resp)
 	if err != nil {
 		log.Println(err.Error())
 		log.Println("调用远程服务错误")

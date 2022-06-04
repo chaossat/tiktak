@@ -3,6 +3,8 @@ package controller
 import (
 	"context"
 	"fmt"
+	"log"
+	"time"
 
 	"github.com/chaossat/tiktak/service/login/pb"
 	"github.com/gin-gonic/gin"
@@ -41,6 +43,14 @@ import (
 
 //微服务化：
 func LoginHandler(ctx *gin.Context) {
+	//开启debug，观察性能瓶颈
+	debugid, ok := <-DebugChan
+	if ok {
+		now := time.Now()
+		log.Println("开始登录请求,操作ID:", debugid)
+		defer log.Println("结束登录请求,操作ID:", debugid, "操作耗时：", time.Since(now))
+	}
+
 	username := ctx.Query("username")
 	password := ctx.Query("password")
 	//连接grpc服务
@@ -59,7 +69,7 @@ func LoginHandler(ctx *gin.Context) {
 	req.Password = &password
 
 	resp, err := grpcClient.Login(context.TODO(), &req)
-	fmt.Println("login resp:", resp)
+	// fmt.Println("login resp:", resp)
 	if err != nil {
 		fmt.Println(err.Error())
 		fmt.Println("调用远程服务错误")

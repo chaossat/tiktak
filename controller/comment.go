@@ -3,7 +3,9 @@ package controller
 import (
 	"context"
 	"fmt"
+	"log"
 	"strconv"
+	"time"
 
 	"github.com/chaossat/tiktak/service/comment/pb"
 	"github.com/gin-gonic/gin"
@@ -13,6 +15,14 @@ import (
 
 // CommentActionHandler:评论操作处理器函数
 func CommentActionHandler(ctx *gin.Context) {
+	//开启debug，观察性能瓶颈
+	debugid, ok := <-DebugChan
+	if ok {
+		now := time.Now()
+		log.Println("开始评论操作请求,操作ID:", debugid)
+		defer log.Println("结束评论操作请求,操作ID:", debugid, "操作耗时：", time.Since(now))
+	}
+
 	userid, _ := strconv.ParseInt(ctx.Query("user_id"), 10, 64)
 	token := ctx.Query("token")
 	video_id, _ := strconv.ParseInt(ctx.Query("video_id"), 10, 64)
@@ -43,7 +53,7 @@ func CommentActionHandler(ctx *gin.Context) {
 
 	//发起请求
 	resp, err := grpcClient.CommentAction(context.TODO(), &req)
-	fmt.Println("commentAction resp:", resp)
+	// fmt.Println("commentAction resp:", resp)
 	if err != nil {
 		fmt.Println(err.Error())
 		fmt.Println("调用远程服务错误")
@@ -72,6 +82,14 @@ func CommentActionResponse(ctx *gin.Context, code int, msg string, comment *pb.C
 
 // CommentListHandler:评论列表处理器函数
 func CommentListHandler(ctx *gin.Context) {
+	//开启debug，观察性能瓶颈
+	debugid, ok := <-DebugChan
+	if ok {
+		now := time.Now()
+		log.Println("开始评论列表请求,操作ID:", debugid)
+		defer log.Println("结束评论列表请求,操作ID:", debugid, "操作耗时：", time.Since(now))
+	}
+
 	token := ctx.Query("token")
 	video_id, _ := strconv.ParseInt(ctx.Query("video_id"), 10, 64)
 	//连接grpc服务
@@ -89,7 +107,7 @@ func CommentListHandler(ctx *gin.Context) {
 	req.Token = &token
 	req.VideoId = &video_id
 	resp, err := grpcClient.CommentList(context.TODO(), &req)
-	fmt.Println("commentList resp:", resp)
+	// fmt.Println("commentList resp:", resp)
 	if err != nil {
 		fmt.Println(err.Error())
 		fmt.Println("调用远程服务错误")

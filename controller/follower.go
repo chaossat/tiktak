@@ -3,7 +3,9 @@ package controller
 import (
 	"context"
 	"fmt"
+	"log"
 	"strconv"
+	"time"
 
 	"github.com/chaossat/tiktak/service/followerlist/pb"
 	"github.com/gin-gonic/gin"
@@ -12,6 +14,14 @@ import (
 )
 
 func Followerlist(ctx *gin.Context) {
+	//开启debug，观察性能瓶颈
+	debugid, ok := <-DebugChan
+	if ok {
+		now := time.Now()
+		log.Println("开始粉丝列表请求,操作ID:", debugid)
+		defer log.Println("结束粉丝列表请求,操作ID:", debugid, "操作耗时：", time.Since(now))
+	}
+
 	token := ctx.Query("token")
 	user_id, err := strconv.Atoi(ctx.Query("user_id"))
 	uid := int64(user_id)
@@ -33,7 +43,7 @@ func Followerlist(ctx *gin.Context) {
 	request.Token = &token
 	request.UserId = &uid
 	response, err := grpcClient.GetFollowerlist(context.TODO(), &request)
-	fmt.Println("publist resp:", response)
+	// fmt.Println("publist resp:", response)
 	if err != nil {
 		fmt.Println(err.Error())
 		fmt.Println("调用远程服务错误")

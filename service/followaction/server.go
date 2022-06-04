@@ -48,7 +48,7 @@ func (f *FollowAction) FollowAction(ctx context.Context, req *pb.DouyinRelationA
 	//验证user_id , 错误代码2
 	userinf, err := db.UserInfoById(int(*req.UserId))
 	log.Println(*req.UserId)
-	if err != nil || userinf.ID == 0 {
+	if err != nil {
 		statuscode = 2
 		statusmsg = "验证user_id失败"
 		return &pb.DouyinRelationActionResponse{
@@ -58,7 +58,7 @@ func (f *FollowAction) FollowAction(ctx context.Context, req *pb.DouyinRelationA
 	}
 	//验证to_user_id , 错误代码3
 	touserinf, err := db.UserInfoById(int(*req.ToUserId))
-	if err != nil || touserinf.ID == 0 {
+	if err != nil {
 		statuscode = 3
 		statusmsg = "验证to_user_id失败"
 		return &pb.DouyinRelationActionResponse{
@@ -77,7 +77,7 @@ func (f *FollowAction) FollowAction(ctx context.Context, req *pb.DouyinRelationA
 	}
 	if err != nil {
 		statuscode = 4
-		statusmsg = "验证user_id失败"
+		statusmsg = "关注操作发生错误"
 		return &pb.DouyinRelationActionResponse{
 			StatusCode: &statuscode,
 			StatusMsg:  &statusmsg,
@@ -86,7 +86,7 @@ func (f *FollowAction) FollowAction(ctx context.Context, req *pb.DouyinRelationA
 
 	//成功
 	statuscode = 0
-	statusmsg = "关注成功"
+	statusmsg = "操作成功"
 	return &pb.DouyinRelationActionResponse{
 		StatusCode: &statuscode,
 		StatusMsg:  &statusmsg,
@@ -97,7 +97,6 @@ func main() {
 	log.Println("正在启动FollowAction服务......")
 	InitConfig()
 	common.InitDB()
-	common.InitRedis()
 	//初始化grpc实例
 	grpcServer := grpc.NewServer()
 

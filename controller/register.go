@@ -2,16 +2,26 @@ package controller
 
 import (
 	"context"
+	"log"
+	"net/http"
+	"time"
+
 	"github.com/chaossat/tiktak/service/register/pb"
 	"github.com/gin-gonic/gin"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
-	"log"
-	"net/http"
 )
 
 //注册并生成token
 func Register(ctx *gin.Context) {
+	//开启debug，观察性能瓶颈
+	debugid, ok := <-DebugChan
+	if ok {
+		now := time.Now()
+		log.Println("开始注册请求,操作ID:", debugid)
+		defer log.Println("结束注册请求,操作ID:", debugid, "操作耗时：", time.Since(now))
+	}
+
 	username := ctx.Query("username")
 	password := ctx.Query("password")
 	//log.Println(username, password)
@@ -35,7 +45,7 @@ func Register(ctx *gin.Context) {
 	register.Username = &username
 	register.Password = &password
 	resp, err := grpcClient.Register(context.TODO(), &register)
-	log.Println("resp:", resp)
+	// log.Println("resp:", resp)
 	if err != nil {
 		log.Println(err.Error())
 		log.Println("调用远程服务错误")

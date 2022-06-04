@@ -73,22 +73,28 @@ func Follow(user, author model.User) error {
 	// var goa *gorm.Association
 	err := common.GetDB().Model(&user).Association("Follows").Find(&author).Error
 	if err != nil {
-		//没有关注过就添加关注
-		err = common.GetDB().Model(&user).Association("Follows").Append(&author).Error
-		if err != nil {
-			fmt.Println("查询是否已关注错误", err)
-			return err
+		if err.Error() == "record not found" {
+			//没有关注过就添加关注
+			err = common.GetDB().Model(&user).Association("Follows").Append(&author).Error
+			if err != nil {
+				fmt.Println("查询是否已关注错误", err)
+				return err
+			}
 		}
+		return err
 	}
-	//再检查author有没有被user关注，修复
+	//再检查author有没有被user关注
 	err = common.GetDB().Model(&author).Association("Followers").Find(&user).Error
 	if err != nil {
-		//没有被关注过就添加关注
-		err = common.GetDB().Model(&author).Association("Followers").Append(&user).Error
-		if err != nil {
-			fmt.Println("查询是否已关注错误", err)
-			return err
+		if err.Error() == "record not found" {
+			//没有被关注过就添加关注
+			err = common.GetDB().Model(&author).Association("Followers").Append(&user).Error
+			if err != nil {
+				fmt.Println("查询是否已关注错误", err)
+				return err
+			}
 		}
+		return err
 	}
 	return nil
 }
@@ -107,10 +113,10 @@ func DelFollow(user, author model.User) error {
 		}
 	}
 	//再检查author有没有被user关注，修复
-	err = common.GetDB().Model(&user).Association("Followers").Find(&author).Error
+	err = common.GetDB().Model(&author).Association("Followers").Find(&user).Error
 	if err == nil {
 		//没有被关注过就添加关注
-		err = common.GetDB().Model(&user).Association("Followers").Delete(&author).Error
+		err = common.GetDB().Model(&author).Association("Followers").Delete(&user).Error
 		if err != nil {
 			fmt.Println("查询是否已关注错误", err)
 			return err

@@ -68,3 +68,10 @@ func TestVideoCountByID(t *testing.T) {
 	fmt.Println("错误信息:", err)
 	fmt.Println("获取到的视频数量:", res)
 }
+
+func TestDeleteVideoByID(t *testing.T) {
+	InitConfig()
+	// 加载数据库
+	common.InitDB()
+	fmt.Println(DeleteVideoVyID(32))
+}

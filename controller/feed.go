@@ -5,6 +5,7 @@ import (
 	"log"
 	"net/http"
 	"strconv"
+	"time"
 
 	"github.com/chaossat/tiktak/service/feed/pb"
 	"github.com/gin-gonic/gin"
@@ -13,6 +14,14 @@ import (
 )
 
 func Feed(ctx *gin.Context) {
+	//开启debug，观察性能瓶颈
+	debugid, ok := <-DebugChan
+	if ok {
+		now := time.Now()
+		log.Println("开始Feed请求,操作ID:", debugid)
+		defer log.Println("结束Feed请求,操作ID:", debugid, "操作耗时：", time.Since(now))
+	}
+
 	latest_time := ctx.Query("latest_time")
 	latesttime, err := strconv.ParseInt(latest_time, 10, 64)
 	if err != nil {
@@ -45,7 +54,7 @@ func Feed(ctx *gin.Context) {
 	req.LatestTime = &latesttime
 	req.Token = &token
 	resp, err := grpcClient.GetFeed(context.TODO(), &req)
-	log.Println("resp:", resp)
+	// log.Println("resp:", resp)
 	if err != nil {
 		log.Println(err.Error())
 		log.Println("调用远程服务错误")

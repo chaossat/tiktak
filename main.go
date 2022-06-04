@@ -5,8 +5,10 @@ import (
 
 	_ "github.com/CodyGuo/godaemon"
 	"github.com/chaossat/tiktak/common"
+	"github.com/chaossat/tiktak/controller"
 	"github.com/chaossat/tiktak/oss"
 	"github.com/chaossat/tiktak/router"
+	feedmodel "github.com/chaossat/tiktak/service/feed/model"
 	"github.com/gin-gonic/gin"
 	"github.com/spf13/viper"
 )
@@ -16,7 +18,11 @@ func main() {
 	InitConfig()
 	router.Init(r)
 	common.InitDB()
+	feedmodel.InitRedis()
 	go oss.Init()
+
+	go controller.DebugInit()
+
 	port := viper.GetString("server.port")
 	panic(r.Run(port))
 }

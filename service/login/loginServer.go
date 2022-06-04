@@ -90,10 +90,12 @@ func (loginHandler *LoginHandler) Login(ctx context.Context, loginRequest *pb.Do
 func LoginResponse(code int, msg string, user_id int, token string) *pb.DouyinUserLoginResponse {
 	codeResponse := int32(code)
 	userID := int64(user_id)
-	return &pb.DouyinUserLoginResponse{
+	res := &pb.DouyinUserLoginResponse{
 		StatusCode: &codeResponse,
 		StatusMsg:  &msg,
 		UserId:     &userID,
 		Token:      &token,
 	}
+	log.Println("Login resp:", res)
+	return res
 }

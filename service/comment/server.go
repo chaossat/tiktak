@@ -162,7 +162,7 @@ func CommentActionResponse(code int, msg string, commentID int, user *pb.User, c
 	codeResponse := int32(code)
 	cid := int64(commentID)
 	date := time.Unix(cdate, 0).String()[5:10]
-	return &pb.DouyinCommentAcitonResponse{
+	res := &pb.DouyinCommentAcitonResponse{
 		StatusCode: &codeResponse,
 		StatusMsg:  &msg,
 		Comment: &pb.Comment{
@@ -172,6 +172,8 @@ func CommentActionResponse(code int, msg string, commentID int, user *pb.User, c
 			CreateDate: &date,
 		},
 	}
+	log.Println("CommentAction resp:", res)
+	return res
 }
 
 type CommentListHandler struct {
@@ -220,9 +222,11 @@ func (co *CommentListHandler) CommentList(ctx context.Context, req *pb.DouyinCom
 //CommentListResponse:返回评论列表处理信息
 func CommentListResponse(code int, msg string, list []*pb.Comment) *pb.DouyinCommentListResponse {
 	scode := int32(code)
-	return &pb.DouyinCommentListResponse{
+	res := &pb.DouyinCommentListResponse{
 		StatusCode:  &scode,
 		StatusMsg:   &msg,
 		CommentList: list,
 	}
+	log.Println("CommentList resp:", res)
+	return res
 }

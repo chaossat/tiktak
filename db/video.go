@@ -56,3 +56,8 @@ func IsVideoExist(vid int) (bool, error) {
 	}
 	return p == 1, nil
 }
+
+//删除视频，仅调试用
+func DeleteVideoVyID(vid int) error {
+	return common.GetDB().Where("id = ?", vid).Delete(&model.Video{}).Error
+}

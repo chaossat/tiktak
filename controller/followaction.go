@@ -4,6 +4,7 @@ import (
 	"context"
 	"log"
 	"strconv"
+	"time"
 
 	"github.com/chaossat/tiktak/middleware"
 	"github.com/chaossat/tiktak/service/followaction/pb"
@@ -13,6 +14,14 @@ import (
 )
 
 func FollowActionHandler(ctx *gin.Context) {
+	//开启debug，观察性能瓶颈
+	debugid, ok := <-DebugChan
+	if ok {
+		now := time.Now()
+		log.Println("开始关注操作请求,操作ID:", debugid)
+		defer log.Println("结束关注操作请求,操作ID:", debugid, "操作耗时：", time.Since(now))
+	}
+
 	token := ctx.Query("token")
 	touserid := ctx.Query("to_user_id")
 	actiontype := ctx.Query("action_type")
@@ -51,9 +60,9 @@ func FollowActionHandler(ctx *gin.Context) {
 	req.Token = &token
 	req.ToUserId = &touseridint
 	req.ActionType = &actiontypeint
-	log.Println("req:", *req.UserId, *req.ActionType, *req.ToUserId)
+	// log.Println("req:", *req.UserId, *req.ActionType, *req.ToUserId)
 	resp, err := grpcClient.FollowAction(context.TODO(), &req)
-	log.Println("resp:", resp)
+	// log.Println("resp:", resp)
 	if err != nil {
 		log.Println(err.Error())
 		log.Println("调用远程服务错误")

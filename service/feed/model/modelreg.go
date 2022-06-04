@@ -1,9 +1,10 @@
 package model
 
 import (
-	"github.com/go-redis/redis"
 	"log"
 	"strconv"
+
+	"github.com/go-redis/redis"
 )
 
 //获取视频作者信息
@@ -24,6 +25,9 @@ func GetVideoList(latest_time int64) ([]Video, error) {
 		Order("update_time desc").
 		Limit(30).Find(&videos).Error
 	if err != nil {
+		if err.Error() == "record not found" {
+			return videos, nil
+		}
 		log.Println("查询视频列表错误")
 		return videos, err
 	}
@@ -114,6 +118,9 @@ func IsFollow(user, author User) (bool, error) {
 	//Db.Where("id = ?", authorid).First(&author)
 	err := Db.Model(&user).Association("Follows").Find(&author).Error
 	if err != nil {
+		if err.Error() == "record not found" {
+			return false, nil
+		}
 		log.Println("查询是否已关注错误")
 		return false, err
 	}

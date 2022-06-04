@@ -1,8 +1,6 @@
 package db
 
 import (
-	"errors"
-
 	"github.com/chaossat/tiktak/common"
 	"github.com/chaossat/tiktak/model"
 )
@@ -10,10 +8,7 @@ import (
 //CommentCountByVID:根据视频id获取评论数量
 func CommentCountByVID(vid int) (int, error) {
 	video := &model.Video{}
-	common.GetDB().Where("id = ?", vid).First(video)
-	if video.ID == 0 {
-		return -1, errors.New("no such video")
-	}
+	video.ID = int64(vid)
 	cnt := common.GetDB().Model(video).Association("comments").Count()
 	return cnt, nil
 }
@@ -30,10 +25,12 @@ func CommentsByVID(vid int) ([]model.Comment, error) {
 
 //CreateComment:创建评论
 func CreateComment(comment *model.Comment) error {
-	return common.GetDB().Create(comment).Error
+	// return common.GetDB().Create(comment).Error
+	return common.GetDB().Model(&model.Video{}).Association("comments").Append(comment).Error
 }
 
 //DeleteComment:删除评论
 func DeleteComment(cid int64) error {
-	return common.GetDB().Where("id = ?", int(cid)).Delete(&model.Comment{}).Error
+	// return common.GetDB().Where("id = ?", int(cid)).Delete(&model.Comment{}).Error
+	return common.GetDB().Model(&model.Video{}).Association("comments").Delete(&model.Comment{ID: cid}).Error
 }
