@@ -1,4 +1,0 @@
-完成以下函数：
-favorate.go:
-    FavorateCountByID
-    IsFavorate
