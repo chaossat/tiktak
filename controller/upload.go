@@ -80,6 +80,7 @@ func UploadHandler(ctx *gin.Context) {
 	if err != nil {
 		fmt.Printf("Failed to copy file, err:%s\n", err.Error())
 		UploadResponse(ctx, -7, "Error Occoured!")
+		newFile.Close()
 		return
 	}
 	//为视频生成封面
@@ -104,6 +105,7 @@ func UploadHandler(ctx *gin.Context) {
 	if err != nil {
 		fmt.Printf("Failed to update mysql, err:%s\n", err.Error())
 		UploadResponse(ctx, -9, "Error Occoured!")
+		newFile.Close()
 		return
 	}
 
