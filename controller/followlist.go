@@ -4,9 +4,8 @@ import (
 	"context"
 	"log"
 	"net/http"
+	"strconv"
 	"time"
-
-	"github.com/chaossat/tiktak/middleware"
 
 	"github.com/chaossat/tiktak/service/followlist/pb"
 	"github.com/gin-gonic/gin"
@@ -25,17 +24,7 @@ func FollowListHandler(ctx *gin.Context) {
 
 	//获得前端的请求
 	token := ctx.Query("token")
-	claims, err := middleware.CheckToken(token)
-	if err != nil {
-		log.Println("token错误", err)
-		ctx.JSON(200, gin.H{
-			"status_code": 1,
-			"status_msg":  "token错误",
-			"user_list":   nil,
-		})
-		return
-	}
-	user_id := claims.UserID
+	user_id, _ := strconv.ParseInt(ctx.Query("user_id"), 10, 64)
 	//建立rpc客户端去请求server
 	grpcConn, err := grpc.Dial(":12359", grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {

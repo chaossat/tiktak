@@ -25,12 +25,10 @@ func CommentsByVID(vid int) ([]model.Comment, error) {
 
 //CreateComment:创建评论
 func CreateComment(comment *model.Comment) error {
-	// return common.GetDB().Create(comment).Error
-	return common.GetDB().Model(&model.Video{}).Association("comments").Append(comment).Error
+	return common.GetDB().Create(comment).Error
 }
 
 //DeleteComment:删除评论
 func DeleteComment(cid int64) error {
-	// return common.GetDB().Where("id = ?", int(cid)).Delete(&model.Comment{}).Error
-	return common.GetDB().Model(&model.Video{}).Association("comments").Delete(&model.Comment{ID: cid}).Error
+	return common.GetDB().Where("id = ?", int(cid)).Delete(&model.Comment{}).Error
 }

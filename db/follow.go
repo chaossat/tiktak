@@ -68,32 +68,17 @@ func IsFollow(user, author model.User) bool {
 }
 
 //关注
-func Follow(user, author model.User) error {
-	//先检查user是否关注了author，没关注就关注
-	// var goa *gorm.Association
-	err := common.GetDB().Model(&user).Association("Follows").Find(&author).Error
+func Follow(user, author model.User) (err error) {
+	//添加关注
+	err = common.GetDB().Model(&user).Association("Follows").Append(&author).Error
 	if err != nil {
-		if err.Error() == "record not found" {
-			//没有关注过就添加关注
-			err = common.GetDB().Model(&user).Association("Follows").Append(&author).Error
-			if err != nil {
-				fmt.Println("查询是否已关注错误", err)
-				return err
-			}
-		}
+		fmt.Println("查询是否已关注错误", err)
 		return err
 	}
-	//再检查author有没有被user关注
-	err = common.GetDB().Model(&author).Association("Followers").Find(&user).Error
+	//添加关注
+	err = common.GetDB().Model(&author).Association("Followers").Append(&user).Error
 	if err != nil {
-		if err.Error() == "record not found" {
-			//没有被关注过就添加关注
-			err = common.GetDB().Model(&author).Association("Followers").Append(&user).Error
-			if err != nil {
-				fmt.Println("查询是否已关注错误", err)
-				return err
-			}
-		}
+		fmt.Println("查询是否已关注错误", err)
 		return err
 	}
 	return nil
