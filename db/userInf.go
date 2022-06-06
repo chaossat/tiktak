@@ -57,3 +57,20 @@ func UserInfoRegister(name string, pwd string) error {
 	err := common.GetDB().Create(&inf).Error
 	return err
 }
+
+// 查询用户信息,仅调试用
+func UserInfo(id int) ([]*model.User, error) {
+	inf := []*model.User{}
+	err := common.GetDB().Where("id>?", id).Find(&inf).Error
+	return inf, err
+}
+
+//插入对应id用户，仅调试用
+func InsertUserByID(id int) error {
+	user := model.User{
+		ID:            int64(id),
+		Username:      "占位空用户",
+		Password_Hash: util.MD5V("123456"),
+	}
+	return common.GetDB().Create(&user).Error
+}

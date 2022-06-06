@@ -50,7 +50,7 @@ func GetAuthor(userid, authorid int64) pb.User {
 	}
 	author, err := model.GetUser(authorid)
 	if err != nil {
-		log.Println("查询视频作者错误")
+		log.Println("查询视频作者错误", authorid, err.Error())
 		return pbauthor
 	}
 	Id := author.ID

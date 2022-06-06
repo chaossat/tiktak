@@ -12,6 +12,7 @@ import (
 	"github.com/chaossat/tiktak/db"
 	"github.com/chaossat/tiktak/middleware"
 	"github.com/chaossat/tiktak/oss"
+	feedmodel "github.com/chaossat/tiktak/service/feed/model"
 	"github.com/chaossat/tiktak/service/publist/pb"
 	"github.com/spf13/viper"
 	"google.golang.org/grpc"
@@ -96,21 +97,31 @@ func (this *PublistServer) PublishVideo(ctx context.Context, req *pb.DouyinPubli
 		var isfabvorite = false
 		playURL := oss.GetURL(videos[i].Location)
 		coverURL := oss.GetURL(videos[i].Cover_location)
-		fCount := int64(0)
+		favoritecnt, err := feedmodel.GetFavoriteCount(videos[i].ID)
+		if err != nil {
+			log.Println("获取视频的点赞个数错误", err.Error())
+			var code int32 = -7
+			var msg string = "获取视频的点赞个数错误！"
+			return &pb.DouyinPublishListResponse{
+				StatusCode: &code,
+				StatusMsg:  &msg,
+				VideoList:  nil,
+			}, nil
+		}
 		cCount := int64(0)
 		vide_ans[i] = &pb.Video{
 			Id:            &videos[i].ID,
 			Author:        &user,
 			PlayUrl:       &playURL,
 			CoverUrl:      &coverURL,
-			FavoriteCount: &fCount,
+			FavoriteCount: &favoritecnt,
 			CommentCount:  &cCount,
 			IsFavorite:    &isfabvorite,
 			Title:         &videos[i].Title,
 		}
 	}
 	if err != nil {
-		var code int32 = -7
+		var code int32 = -8
 		var msg string = "视频查找失败！"
 		return &pb.DouyinPublishListResponse{
 			StatusCode: &code,
@@ -132,6 +143,7 @@ func main() {
 	log.Println("正在启动Publist服务......")
 	InitConfig()
 	common.InitDB()
+	feedmodel.InitRedis()
 	//初始化grpc实例
 	grpcServer := grpc.NewServer()
 
