@@ -106,7 +106,7 @@ func GetFollowerCount(user User) int64 {
 	//	log.Println("查询用户错误")
 	//	return -1, err
 	//}
-	cnt := Db.Model(&user).Association("Follows").Count()
+	cnt := Db.Model(&user).Association("Followers").Count()
 	followers = int64(cnt)
 	return followers
 }

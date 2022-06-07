@@ -11,6 +11,7 @@ import (
 	"github.com/chaossat/tiktak/common"
 	"github.com/chaossat/tiktak/db"
 	"github.com/chaossat/tiktak/middleware"
+	"github.com/chaossat/tiktak/model"
 	"github.com/chaossat/tiktak/service/followerlist/pb"
 	"github.com/spf13/viper"
 	"google.golang.org/grpc"
@@ -22,7 +23,7 @@ type Followerlist struct {
 
 func (followerlist Followerlist) GetFollowerlist(ctx context.Context, request *pb.DouyinRelationFollowerListRequest) (*pb.DouyinRelationFollowerListResponse, error) {
 
-	_, err := middleware.CheckToken(*request.Token)
+	payload, err := middleware.CheckToken(*request.Token)
 	if err != nil {
 		var code int32 = -1
 		var msg string = "token认证失败" + err.Error()
@@ -92,7 +93,7 @@ func (followerlist Followerlist) GetFollowerlist(ctx context.Context, request *p
 				UserList:   nil,
 			}, nil
 		}
-		isfollowdudu := db.IsFollow(userinf, *followers[i])
+		isfollowdudu := db.IsFollow(model.User{ID: payload.UserID}, *followers[i])
 		followers_ans[i] = &pb.User{
 			Id:            &followers[i].ID,
 			Name:          &followers[i].Username,
