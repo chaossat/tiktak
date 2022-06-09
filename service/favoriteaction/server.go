@@ -17,7 +17,7 @@ import (
 type FavoriteAction struct {
 }
 
-func (this *FavoriteAction) GetFavoriteAction(ctx context.Context, req *pb.DouyinFavoriteActionRequest) (*pb.DouyinFavoriteActionResponse, error) {
+func (f *FavoriteAction) GetFavoriteAction(ctx context.Context, req *pb.DouyinFavoriteActionRequest) (*pb.DouyinFavoriteActionResponse, error) {
 	var statuscode int32
 	var statusmsg string
 	token := *req.Token

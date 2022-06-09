@@ -32,7 +32,7 @@ var errorUser = pb.User{
 	IsFollow: &errorFollow,
 }
 
-func (this *UserInf) GetUserinf(context context.Context, request *pb.DouyinUserRequest) (*pb.DouyinUserResponse, error) {
+func (u *UserInf) GetUserinf(context context.Context, request *pb.DouyinUserRequest) (*pb.DouyinUserResponse, error) {
 	uid := request.UserId
 	token := request.Token
 	_, err := middleware.CheckToken(*token)

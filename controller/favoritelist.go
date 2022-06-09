@@ -54,7 +54,6 @@ func FavoriteList(ctx *gin.Context) {
 	req.UserId = &user_id
 	req.Token = &token
 	resp, err := grpcClient.GetFavoriteList(context.TODO(), &req)
-	// log.Println("resp:", resp)
 	if err != nil {
 		log.Println(err.Error())
 		log.Println("点赞过的视频调用远程服务错误")

@@ -17,7 +17,7 @@ import (
 
 type Register struct{}
 
-func (this *Register) Register(ctx context.Context, req *pb.DouyinUserRegisterRequest) (*pb.DouyinUserRegisterResponse, error) {
+func (r *Register) Register(ctx context.Context, req *pb.DouyinUserRegisterRequest) (*pb.DouyinUserRegisterResponse, error) {
 	username := req.GetUsername()
 	password := req.GetPassword()
 	password_hash := util.MD5V(password)
@@ -64,7 +64,6 @@ func (this *Register) Register(ctx context.Context, req *pb.DouyinUserRegisterRe
 			Token:      &token,
 		}, nil
 	}
-	//log.Println("token:", token)
 	statuscode = 0
 	statusmsg = "注册成功"
 	userid = user.ID

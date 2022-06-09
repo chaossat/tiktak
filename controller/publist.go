@@ -47,7 +47,6 @@ func PubListHandler(ctx *gin.Context) {
 	req.UserId = &uid
 
 	resp, err := grpcClient.PublishVideo(context.TODO(), &req)
-	// fmt.Println("publist resp:", resp)
 	if err != nil {
 		fmt.Println(err.Error())
 		fmt.Println("调用远程服务错误")

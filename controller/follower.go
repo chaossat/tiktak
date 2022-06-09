@@ -43,7 +43,6 @@ func Followerlist(ctx *gin.Context) {
 	request.Token = &token
 	request.UserId = &uid
 	response, err := grpcClient.GetFollowerlist(context.TODO(), &request)
-	// fmt.Println("publist resp:", response)
 	if err != nil {
 		fmt.Println(err.Error())
 		fmt.Println("调用远程服务错误")

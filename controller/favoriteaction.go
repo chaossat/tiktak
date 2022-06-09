@@ -23,7 +23,6 @@ func FavoriteAction(ctx *gin.Context) {
 		defer log.Println("结束点赞操作请求,操作ID:", debugid, "操作耗时：", time.Since(now))
 	}
 
-	//userid := ctx.Query("user_id")
 	token := ctx.Query("token")
 	videoid := ctx.Query("video_id")
 	actiontype := ctx.Query("action_type")
@@ -37,15 +36,6 @@ func FavoriteAction(ctx *gin.Context) {
 		return
 	}
 	user_id := claims.UserID
-	//user_id, err := strconv.ParseInt(userid, 10, 64)
-	//if err != nil {
-	//	log.Println("userid错误", err)
-	//	ctx.JSON(200, gin.H{
-	//		"status_code": 1,
-	//		"status_msg":  "userid错误",
-	//	})
-	//	return
-	//}
 	video_id, err := strconv.ParseInt(videoid, 10, 64)
 	if err != nil {
 		log.Println("videoid错误")
@@ -86,7 +76,6 @@ func FavoriteAction(ctx *gin.Context) {
 	req.VideoId = &video_id
 	req.ActionType = &action_type
 	resp, err := grpcClient.GetFavoriteAction(context.TODO(), &req)
-	// log.Println("resp:", resp)
 	if err != nil {
 		log.Println(err.Error())
 		log.Println("调用远程服务错误")

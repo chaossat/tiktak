@@ -24,7 +24,6 @@ func Register(ctx *gin.Context) {
 
 	username := ctx.Query("username")
 	password := ctx.Query("password")
-	//log.Println(username, password)
 	//连接grpc服务
 	grpcConn, err := grpc.Dial(":12345", grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
@@ -45,7 +44,6 @@ func Register(ctx *gin.Context) {
 	register.Username = &username
 	register.Password = &password
 	resp, err := grpcClient.Register(context.TODO(), &register)
-	// log.Println("resp:", resp)
 	if err != nil {
 		log.Println(err.Error())
 		log.Println("调用远程服务错误")

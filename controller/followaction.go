@@ -38,7 +38,6 @@ func FollowActionHandler(ctx *gin.Context) {
 	touseridint, _ := strconv.ParseInt(touserid, 10, 64)
 	tmp, _ := strconv.ParseInt(actiontype, 10, 64)
 	actiontypeint := int32(tmp)
-	// log.Println("连接grpc服务")
 	grpcConn, err := grpc.Dial(":12358", grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
 		log.Println("连接grpc服务失败")
@@ -48,7 +47,6 @@ func FollowActionHandler(ctx *gin.Context) {
 		})
 		return
 	}
-	// log.Println("连接grpc服务成功")
 	defer grpcConn.Close()
 
 	//初始化grpc客户端
@@ -60,9 +58,7 @@ func FollowActionHandler(ctx *gin.Context) {
 	req.Token = &token
 	req.ToUserId = &touseridint
 	req.ActionType = &actiontypeint
-	// log.Println("req:", *req.UserId, *req.ActionType, *req.ToUserId)
 	resp, err := grpcClient.FollowAction(context.TODO(), &req)
-	// log.Println("resp:", resp)
 	if err != nil {
 		log.Println(err.Error())
 		log.Println("调用远程服务错误")

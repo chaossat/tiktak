@@ -12,36 +12,7 @@ import (
 	"google.golang.org/grpc/credentials/insecure"
 )
 
-// //LoginHandler:登录接口处理器
-// func LoginHandler(ctx *gin.Context) {
-// 	username := ctx.Query("username")
-// 	password := ctx.Query("password")
-// 	ok, err := db.UserLogin(username, password)
-// 	if err != nil {
-// 		fmt.Println(err.Error())
-// 		LoginResponse(ctx, -1, "Error Occoured During Verification!", 0, "")
-// 		return
-// 	}
-// 	if !ok {
-// 		LoginResponse(ctx, -2, "Login Failed!", 0, "")
-// 		return
-// 	}
-// 	err, userinfo := db.UserInfoByName(username)
-// 	if err != nil {
-// 		fmt.Println(err.Error())
-// 		LoginResponse(ctx, -3, "Error Occoured!", 0, "")
-// 		return
-// 	}
-// 	token, err := middleware.CreateToken(userinfo.ID)
-// 	if err != nil {
-// 		fmt.Println(err.Error())
-// 		LoginResponse(ctx, -4, "Error Occoured!", 0, "")
-// 		return
-// 	}
-// 	LoginResponse(ctx, 0, "Login Succeed!", int(userinfo.ID), token)
-// }
-
-//微服务化：
+//LoginHandler:登录接口处理器
 func LoginHandler(ctx *gin.Context) {
 	//开启debug，观察性能瓶颈
 	debugid, ok := <-DebugChan
@@ -69,7 +40,6 @@ func LoginHandler(ctx *gin.Context) {
 	req.Password = &password
 
 	resp, err := grpcClient.Login(context.TODO(), &req)
-	// fmt.Println("login resp:", resp)
 	if err != nil {
 		fmt.Println(err.Error())
 		fmt.Println("调用远程服务错误")

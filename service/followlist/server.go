@@ -61,7 +61,6 @@ func (f *FollowList) GetFollowList(ctx context.Context, req *pb.DouyinRelationFo
 		}
 		return &response, err
 	}
-	log.Println("开始查询")
 	var follows_ans = make([]*pb.User, len(follows))
 	for i := 0; i < len(follows); i++ {
 		followerCount, err := db.FollowerCountByID(int(follows[i].ID))
@@ -122,6 +121,7 @@ func main() {
 	//启动服务
 	grpcServer.Serve(listen)
 }
+
 func InitConfig() {
 	workDir, _ := os.Getwd() //获取当前工作路径，非文件路径，以终端显示路径为准
 	viper.SetConfigName("config.yml")

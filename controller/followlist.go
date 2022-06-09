@@ -46,7 +46,6 @@ func FollowListHandler(ctx *gin.Context) {
 	req.UserId = &user_id
 	req.Token = &token
 	resp, err := grpcClient.GetFollowList(context.TODO(), &req)
-	// log.Println("resp:", resp)
 	if err != nil {
 		log.Println(err.Error())
 		log.Println("调用远程服务错误")

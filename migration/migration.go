@@ -9,7 +9,5 @@ import (
 func SetAutoMigrate(db *gorm.DB) {
 	db.Set("gorm:table_options", "ENGINE=InnoDB").AutoMigrate(&model.User{})
 	db.Set("gorm:table_options", "ENGINE=InnoDB").AutoMigrate(&model.Video{})
-	//db.Set("gorm:table_options", "ENGINE=InnoDB").AutoMigrate(&model.Favorate{})
 	db.Set("gorm:table_options", "ENGINE=InnoDB").AutoMigrate(&model.Comment{})
-	//.........
 }

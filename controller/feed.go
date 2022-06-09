@@ -54,7 +54,6 @@ func Feed(ctx *gin.Context) {
 	req.LatestTime = &latesttime
 	req.Token = &token
 	resp, err := grpcClient.GetFeed(context.TODO(), &req)
-	// log.Println("resp:", resp)
 	if err != nil {
 		log.Println(err.Error())
 		log.Println("调用远程服务错误")

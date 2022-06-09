@@ -19,8 +19,11 @@ func main() {
 	router.Init(r)
 	common.InitDB()
 	feedmodel.InitRedis()
+
+	//开启云对象存储转存
 	go oss.Init()
 
+	//开启debug模式
 	go controller.DebugInit()
 
 	port := viper.GetString("server.port")

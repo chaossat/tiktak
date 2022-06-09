@@ -22,8 +22,6 @@ func Init(r *gin.Engine) {
 			user.POST("/register/", controller.Register)
 			user.POST("/login/", controller.LoginHandler)
 		}
-		douyin.GET("/osstest", controller.GetURL) //临时测试地址
-		//douyin.GET("/feed", controller.VideoListHandler)
 		publish := douyin.Group("/publish")
 		{
 			publish.POST("/action/", controller.UploadHandler)

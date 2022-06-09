@@ -3,11 +3,9 @@ package middleware
 import (
 	"errors"
 	"log"
-	"net/http"
 	"time"
 
 	"github.com/dgrijalva/jwt-go"
-	"github.com/gin-gonic/gin"
 	"github.com/spf13/viper"
 )
 
@@ -59,47 +57,4 @@ func CheckToken(token string) (*MyClaims, error) {
 		return key, nil
 	}
 	return nil, errors.New("token验证失败")
-}
-
-//TODO:jwt中间件
-func JwtToken() gin.HandlerFunc {
-	return func(context *gin.Context) {
-		tokenHeader := context.PostForm("token")
-		if tokenHeader == "" {
-			context.JSON(http.StatusOK, gin.H{
-				"status_code": 1,
-				"status_msg":  "用户token不存在",
-			})
-			context.Abort()
-			return
-		}
-		//checktoken := strings.Split(tokenHeader, " ")
-		//if len(checktoken) != 2 && checktoken[0] != "Bearer" {
-		//	context.JSON(http.StatusOK, gin.H{
-		//		"status_code": 1,
-		//		"status_msg":  "token格式错误",
-		//	})
-		//	context.Abort()
-		//	return
-		//}
-		key, err := CheckToken(tokenHeader)
-		if err != nil {
-			context.JSON(http.StatusOK, gin.H{
-				"status_code": 1,
-				"status_msg":  "token错误",
-			})
-			context.Abort()
-			return
-		}
-		if time.Now().Unix() > key.ExpiresAt {
-			context.JSON(http.StatusOK, gin.H{
-				"status_code": 1,
-				"status_msg":  "token过期",
-			})
-			context.Abort()
-			return
-		}
-		//context.Set("user_id", key.UserID)
-		context.Next()
-	}
 }

@@ -61,7 +61,7 @@ func GetAuthor(userid, authorid int64) pb.User {
 	return pbauthor
 }
 
-func (this *FavoriteList) GetFavoriteList(ctx context.Context, req *pb.DouyinFavoriteListRequest) (*pb.DouyinFavoriteListResponse, error) {
+func (f *FavoriteList) GetFavoriteList(ctx context.Context, req *pb.DouyinFavoriteListRequest) (*pb.DouyinFavoriteListResponse, error) {
 	var statuscode int32
 	var statusmsg string
 	user_id := *req.UserId
@@ -80,14 +80,6 @@ func (this *FavoriteList) GetFavoriteList(ctx context.Context, req *pb.DouyinFav
 		}
 		curid = claims.UserID
 	}
-	//else {
-	//	statuscode = 1
-	//	statusmsg = "用户未登录"
-	//	return &pb.DouyinFavoriteListResponse{
-	//		StatusCode: &statuscode,
-	//		StatusMsg:  &statusmsg,
-	//	}, nil
-	//}
 	if err != nil {
 		statuscode = 1
 		statusmsg = "获取点赞过的视频列表失败"

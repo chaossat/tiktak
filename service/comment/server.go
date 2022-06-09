@@ -96,16 +96,12 @@ type CommentActionHandler struct {
 }
 
 //CommentAction:grpc的CommentAction接口
-func (co *CommentActionHandler) CommentAction(ctx context.Context, req *pb.DouyinCommentActionRequest) (*pb.DouyinCommentAcitonResponse, error) {
+func (c *CommentActionHandler) CommentAction(ctx context.Context, req *pb.DouyinCommentActionRequest) (*pb.DouyinCommentAcitonResponse, error) {
 	// token验证
 	payload, err := middleware.CheckToken(req.GetToken())
 	if err != nil {
 		return CommentActionResponse(-1, "解析token错误:"+err.Error(), 0, ErrorUser(), "", 0), nil
 	}
-	// if payload.UserID != *req.UserId {
-	// 	fmt.Println("用户id:", *req.UserId, "token id:", payload.UserID)
-	// 	return CommentActionResponse(-2, "用户id与token不匹配", 0, ErrorUser(), "", 0), nil
-	// }
 	//查询视频是否存在
 	b, err := db.IsVideoExist(int(req.GetVideoId()))
 	if err != nil {
@@ -181,7 +177,7 @@ type CommentListHandler struct {
 }
 
 //CommentList:grpc的CommentList接口
-func (co *CommentListHandler) CommentList(ctx context.Context, req *pb.DouyinCommentListRequest) (*pb.DouyinCommentListResponse, error) {
+func (c *CommentListHandler) CommentList(ctx context.Context, req *pb.DouyinCommentListRequest) (*pb.DouyinCommentListResponse, error) {
 	// token验证
 	payload, err := middleware.CheckToken(req.GetToken())
 	if err != nil {

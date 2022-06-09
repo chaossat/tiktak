@@ -75,7 +75,6 @@ func UploadHandler(ctx *gin.Context) {
 		UploadResponse(ctx, -6, "Error Occoured!")
 		return
 	}
-	// defer newFile.Close()
 	_, err = newFile.Write(buf.Bytes())
 	if err != nil {
 		fmt.Printf("Failed to copy file, err:%s\n", err.Error())

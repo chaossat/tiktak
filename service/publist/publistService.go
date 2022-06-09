@@ -23,7 +23,7 @@ type PublistServer struct {
 }
 
 // 获取发布的video列表
-func (this *PublistServer) PublishVideo(ctx context.Context, req *pb.DouyinPublishListRequest) (*pb.DouyinPublishListResponse, error) {
+func (p *PublistServer) PublishVideo(ctx context.Context, req *pb.DouyinPublishListRequest) (*pb.DouyinPublishListResponse, error) {
 	// token验证
 	_, err := middleware.CheckToken(*req.Token)
 	if err != nil {

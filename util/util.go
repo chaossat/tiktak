@@ -29,11 +29,6 @@ func Encodeing(s string) string {
 	return Sha1([]byte(s + salt))
 }
 
-// //TokenGenerator:根据用户名生成token
-// func TokenGenerator(username string) string {
-// 	return Encodeing(username + strconv.Itoa(int(time.Now().Unix())) + salt)
-// }
-
 // MD5:对密码加盐后进行md5加密
 func MD5V(pwd string) string {
 	return MD5(pwd + salt)
