@@ -5,6 +5,7 @@ A minimalist back-end framwork built in golang language to imitate tiktok
 先放置配置文件到./config
 ## windows
 EasyStart.bat
+
 EasyStartExe.bat
 
 ## linux环境下启动
