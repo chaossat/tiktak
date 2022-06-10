@@ -4,9 +4,7 @@ A minimalist back-end framwork built in golang language to imitate tiktok
 # 使用方法
 先放置配置文件到./config
 ## windows
-EasyStart.bat
-
-EasyStartExe.bat
+EasyStart.bat或EasyStartExe.bat选择一个启动即可，更推荐使用EasyStartExe.bat进行启动
 
 ## linux环境下启动
 ```shell
